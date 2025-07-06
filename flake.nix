@@ -21,6 +21,10 @@
       url = "https://git.lix.systems/lix-project/nixos-module/archive/2.93.2-1.tar.gz";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    home-manager = {
+      url = "github:nix-community/home-manager/release-25.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL/main";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -31,10 +35,6 @@
     };
     sops-nix = {
       url = "github:Mic92/sops-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    sopswarden = {
-      url = "github:pfassina/sopswarden";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-lib = {
@@ -53,10 +53,10 @@
       nixos,
       nixpkgs,
       lix-module,
+      home-manager,
       nixos-wsl,
       nix-index-database,
       sops-nix,
-      sopswarden,
       nix-lib,
       nix-pkgs,
       ...
@@ -74,9 +74,17 @@
       lib = nixpkgs.lib.extend nix-lib.overlays.default;
     in
     {
-      nixosModules.mySystemModules = {...}: lib.flatten (
-        lib.forEach [ ./modules ] (path: lib.my.listDefaultNixDirs { inherit path; })
-      );
+      nixosModules.mySystemModules = {...}: {
+        imports = [
+          lix-module.nixosModules.default # Use lix instead of nix
+          nixos-wsl.nixosModules.default
+          nix-index-database.nixosModules.nix-index
+          home-manager.nixosModules.home-manager
+          sops-nix.nixosModules.sops
+        ] ++ (lib.flatten (
+          lib.forEach [ ./modules ] (path: lib.my.listDefaultNixDirs { inherit path; })
+        ));
+      };
       nixosModules.mySystemPlatform = {
         native-linux = {...}: {imports = [./platform/native-linux];};
         virtualbox-guest = {...}: {imports = [./platform/virtualbox-guest];};
@@ -84,6 +92,6 @@
         wsl = {...}: {imports = [./platform/wsl];};
       };
       
-      # checks.${system}.mySystemModules = import ./tests/modules {inherit pkgs lib system self;};
+      checks.${system}.mySystemModules = import ./tests/modules {inherit pkgs lib system self;};
     };
 }
