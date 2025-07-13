@@ -17,9 +17,13 @@
   inputs = {
     nixos.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs.url = "github:nixos/nixpkgs/release-25.05";
+    flake-utils.url = "github:numtide/flake-utils";
     lix-module = {
       url = "https://git.lix.systems/lix-project/nixos-module/archive/2.93.2-1.tar.gz";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-utils.follows = "flake-utils";
+      };
     };
     home-manager = {
       url = "github:nix-community/home-manager/release-25.05";
@@ -39,7 +43,10 @@
     };
     nix-lib = {
       url = "github:impure0xntk/nix-lib";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-utils.follows = "flake-utils";
+      };
     };
     nix-pkgs = {
       url = "github:impure0xntk/nix-pkgs";

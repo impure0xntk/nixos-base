@@ -22,9 +22,6 @@
         };
       };
       my.system.users.adminUser = "nixos";
-      system.build.myCheck = pkgs.runCommand "check" {} ''
-        echo "Check passed: $MY_VAR" > $out
-      '';
     }
   ];
 }).config.system.build.toplevel
