@@ -55,50 +55,74 @@
   };
 
   outputs =
-    {
+    inputs@{
       self,
-      nixos,
       nixpkgs,
-      lix-module,
-      home-manager,
-      nixos-wsl,
-      nix-index-database,
-      sops-nix,
-      nix-lib,
-      nix-pkgs,
+      flake-utils,
       ...
     }:
-    let
-      system = "x86_64-linux";
-      # specialArgs = inputs;
+    flake-utils.lib.eachSystem
+      (with flake-utils.lib.system; [ # supported systems
+        x86_64-linux
+        aarch64-linux
+      ])
+      (
+        system:
+        let
+          # specialArgs = inputs;
 
-      # Inspire: https://github.com/tiredofit/home/blob/main/flake.nix
-      pkgs = import nixpkgs {
-        inherit system;
-        config.allowUnfree = true;
-        overlays = nix-pkgs.nixpkgs.overlays;
-      };
-      lib = nixpkgs.lib.extend nix-lib.overlays.default;
-    in
-    {
-      nixosModules.mySystemModules = {...}: {
-        imports = [
-          lix-module.nixosModules.default # Use lix instead of nix
-          nixos-wsl.nixosModules.default
-          nix-index-database.nixosModules.nix-index
-          home-manager.nixosModules.home-manager
-          sops-nix.nixosModules.sops
-        ] ++ (lib.flatten (
-          lib.forEach [ ./modules ] (path: lib.my.listDefaultNixDirs { inherit path; })
-        ));
-      };
-      nixosModules.mySystemPlatform = {
-        native-linux = {...}: {imports = [./platform/native-linux];};
-        virtualbox-guest = {...}: {imports = [./platform/virtualbox-guest];};
-        vm = {...}: {imports = [./platform/vm];};
-        wsl = {...}: {imports = [./platform/wsl];};
-      };
-      
-      checks.${system}.mySystemModules = import ./tests/modules {inherit pkgs lib system self;};
-    };
+          # Inspire: https://github.com/tiredofit/home/blob/main/flake.nix
+          pkgs = import nixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+            overlays = inputs.nix-pkgs.nixpkgs.overlays;
+          };
+          lib = nixpkgs.lib.extend inputs.nix-lib.overlays.default;
+        in
+        {
+          nixosModules.mySystemModules = {
+            imports =
+              with inputs;
+              [
+                lix-module.nixosModules.default # Use lix instead of nix
+                nixos-wsl.nixosModules.default
+                nix-index-database.nixosModules.nix-index
+                home-manager.nixosModules.home-manager
+                sops-nix.nixosModules.sops
+              ]
+              ++ (lib.flatten (lib.forEach [ ./modules ] (path: lib.my.listDefaultNixDirs { inherit path; })));
+          };
+          nixosModules.mySystemPlatform = {
+            native-linux =
+              { ... }:
+              {
+                imports = [ ./platform/native-linux ];
+              };
+            virtualbox-guest =
+              { ... }:
+              {
+                imports = [ ./platform/virtualbox-guest ];
+              };
+            vm =
+              { ... }:
+              {
+                imports = [ ./platform/vm ];
+              };
+            wsl =
+              { ... }:
+              {
+                imports = [ ./platform/wsl ];
+              };
+          };
+
+          checks.mySystemModules = import ./tests/modules {
+            inherit
+              pkgs
+              lib
+              system
+              self
+              ;
+          };
+        }
+      );
 }

@@ -1,12 +1,16 @@
-
-{ pkgs, lib, system, self, }:
+{
+  pkgs,
+  lib,
+  system,
+  self,
+}:
 
 (lib.nixosSystem {
   inherit system;
   modules = [
-    self.nixosModules.mySystemModules
-    self.nixosModules.mySystemPlatform.wsl
-    {
+    self.nixosModules.${system}.mySystemModules
+    self.nixosModules.${system}.mySystemPlatform.wsl
+    ({config, ...}: {
       users = {
         users = {
           # The first is default user.
@@ -21,7 +25,11 @@
           nixos = { };
         };
       };
-      my.system.users.adminUser = "nixos";
-    }
+      my.system.users = {
+        adminUser = "nixos";
+        # devUsers = ["nixos"];
+      };
+      # home-manager.users.nixos.home.stateVersion = config.system.stateVersion;
+    })
   ];
 }).config.system.build.toplevel
