@@ -50,7 +50,10 @@
     };
     nix-pkgs = {
       url = "github:impure0xntk/nix-pkgs";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-utils.follows = "flake-utils";
+      };
     };
   };
 
@@ -75,12 +78,14 @@
           pkgs = import nixpkgs {
             inherit system;
             config.allowUnfree = true;
-            overlays = inputs.nix-pkgs.nixpkgs.overlays;
+            overlays = inputs.nix-pkgs.pkgsOverlay.${system};
           };
-          lib = nixpkgs.lib.extend inputs.nix-lib.overlays.default;
+          lib = inputs.nix-lib.lib.${system};
         in
         {
           nixosModules.mySystemModules = {
+            nixpkgs.pkgs = pkgs;
+
             imports =
               with inputs;
               [
@@ -117,6 +122,7 @@
 
           checks.mySystemModules = import ./tests/modules {
             inherit
+              nixpkgs
               pkgs
               lib
               system

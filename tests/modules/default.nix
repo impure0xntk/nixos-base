@@ -1,12 +1,14 @@
 {
+  nixpkgs,
   pkgs,
   lib,
   system,
   self,
 }:
 
-(lib.nixosSystem {
+(nixpkgs.lib.nixosSystem {
   inherit system;
+  specialArgs = { inherit lib; };
   modules = [
     self.nixosModules.${system}.mySystemModules
     self.nixosModules.${system}.mySystemPlatform.wsl
@@ -30,6 +32,7 @@
         # devUsers = ["nixos"];
       };
       # home-manager.users.nixos.home.stateVersion = config.system.stateVersion;
+      my.system.worklog.enable = true;
     })
   ];
 }).config.system.build.toplevel
