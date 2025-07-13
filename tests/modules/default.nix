@@ -7,8 +7,7 @@
 }:
 
 (nixpkgs.lib.nixosSystem {
-  inherit system;
-  specialArgs = { inherit lib; };
+  inherit system lib;
   modules = [
     self.nixosModules.${system}.mySystemModules
     self.nixosModules.${system}.mySystemPlatform.wsl
