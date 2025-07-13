@@ -7,7 +7,7 @@
 }:
 
 (nixpkgs.lib.nixosSystem {
-  inherit system lib;
+  inherit system lib pkgs;
   modules = [
     self.nixosModules.${system}.mySystemModules
     self.nixosModules.${system}.mySystemPlatform.wsl

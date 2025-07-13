@@ -72,8 +72,6 @@
       (
         system:
         let
-          # specialArgs = inputs;
-
           # Inspire: https://github.com/tiredofit/home/blob/main/flake.nix
           pkgs = import nixpkgs {
             inherit system;
@@ -83,9 +81,9 @@
           lib = inputs.nix-lib.lib.${system};
         in
         {
+          # These modules expects nix-pkgs.pkgsOverlay.${system} .
+          # Inject nixpkgs which has nix-pkgs.pkgsOverlay to nixosSystem.
           nixosModules.mySystemModules = {
-            nixpkgs.pkgs = pkgs;
-
             imports =
               with inputs;
               [
