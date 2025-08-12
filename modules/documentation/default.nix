@@ -39,6 +39,30 @@ in {
           package = pkgs.languagetool.override {jre = cfg.jre;};
           port = cfg.port;
           jrePackage = cfg.jre;
+          public = true; # Important for REST API
+
+          # https://gist.github.com/CRTified/9d996a6a7c548ca42fa3672eee95da92
+          allowOrigin = ""; # To allow access from browser addons
+          settings = {
+            fasttextBinary = "${pkgs.fasttext}/bin/fasttext";
+            # Optional, but highly recommended
+            # Data from: https://fasttext.cc/docs/en/language-identification.html
+            # 131 MB
+            fasttextModel = pkgs.fetchurl {
+              name = "lid.176.bin";
+              url = "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin";
+              hash = "sha256-fmnsVFG8JhzHhE5J5HkqhdfwnAZ4nsgA/EpErsNidk4=";
+            };
+            # Data from:
+            # https://languagetool.org/download/archive/word2vec/
+            word2vecModel = pkgs.linkFarm "word2vec"
+              (builtins.mapAttrs (_: v: pkgs.fetchzip v) {
+                en = { # 83M
+                  url = "https://languagetool.org/download/archive/word2vec/en.zip";
+                  hash = "sha256-PAR0E8qxHBfkHYLJQH3hiuGMuyNF4cw9UbQeXVbau/A=";
+                };
+              });
+          };
         };
       };
     };
