@@ -17,7 +17,7 @@ in {
     jre = lib.mkOption {
       type = lib.types.package;
       description = "JRE package for LanguageTool.";
-      default = pkgs.zulu24;
+      default = pkgs.zuluLTS;
     };
   };
 
