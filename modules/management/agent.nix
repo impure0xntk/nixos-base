@@ -7,7 +7,12 @@ in
     users.users.${cfg.sshUser}.openssh.authorizedKeys.keys = cfg.pubKeys;
     services.openssh = {
       enable = true;
-      settings.AllowUsers = [ cfg.sshUser ];
+      settings = {
+        AllowUsers = [ cfg.sshUser ];
+        PermitRootLogin = "no";
+        PasswordAuthentication = false;
+        # TODO: Change port
+      };
     };
   };
 }
