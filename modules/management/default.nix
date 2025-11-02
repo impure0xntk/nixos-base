@@ -8,6 +8,7 @@ in
   options.my.system.management = {
     manager = {
       enable = lib.mkEnableOption "Whether to enable manager settings";
+      enableCrossCompile = lib.mkEnableOption "Whether to enable cross compile settings for building agent binaries for ARM architecture.";
       sshUser = lib.mkOption {
         type = lib.types.str;
         default = config.my.system.users.adminUser;
