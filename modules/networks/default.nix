@@ -24,7 +24,7 @@ in {
       hostName = cfg.hostname;
       firewall.enable = lib.mkDefault true; # for nixos-generators setting conflict workaround, added lib.mkDefault.
       # Disable because service is failed: https://discourse.nixos.org/t/nftables-could-not-process-rule-no-such-file-or-directory/33031
-      # nftables.enable = ! config.virtualisation.docker.enable; # docker does not support nftables.
+      nftables.enable = lib.mkDefault (! config.virtualisation.docker.enable); # docker does not support nftables.
 
       # Ensure declarative networking, but need to be enabled for runtime.
       # E.g. must be enabled for virtualbox.

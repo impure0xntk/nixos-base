@@ -94,6 +94,7 @@ in {
 
     # Unnecessary
     networking.networkmanager.enable = lib.mkForce false;
+    networking.nftables.enable = lib.mkForce false;
     i18n.inputMethod.enable = lib.mkForce false;
 
     # In now 2025/2, wsl kernel has no AppArmor support.
