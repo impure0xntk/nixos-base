@@ -76,6 +76,18 @@ in
       '';
     };
 
+    # disk(ssd) optimization
+    # https://kokada.dev/blog/an-unordered-list-of-hidden-gems-inside-nixos/
+    services.fstrim.enable = true;
+
+    # irqbalance for multi cpu systems
+    # https://kokada.dev/blog/an-unordered-list-of-hidden-gems-inside-nixos/
+    services.irqbalance.enable = true;
+
+    # IPC performance improvement
+    # https://kokada.dev/blog/an-unordered-list-of-hidden-gems-inside-nixos/
+    services.dbus.implementation = "broker";
+
     # journal
     services.journald = {
       extraConfig = ''
