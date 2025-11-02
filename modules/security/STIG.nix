@@ -81,6 +81,7 @@ in
 
     security.audit.rules =
       let
+        # https://github.com/ansible-lockdown/UBUNTU22-CIS/pull/273/files
         commandForV268095 = if pkgs.stdenv.hostPlatform.isAarch
           then "renameat,unlinkat"
           else "rename,unlink,rmdir,renameat,unlinkat";
