@@ -79,7 +79,21 @@ in
 
     # V-268090: (audit) skip because V-268080 satisfies this.
 
-    security.audit.rules = [
+    security.audit.rules =
+      let
+        commandForV268095 = if pkgs.stdenv.hostPlatform.isAarch
+          then "renameat,unlinkat"
+          else "rename,unlink,rmdir,renameat,unlinkat";
+        commandForV268098 = if pkgs.stdenv.hostPlatform.isAarch
+          then "truncate,ftruncate,openat,open_by_handle_at"
+          else "open,creat,truncate,ftruncate,openat,open_by_handle_at";
+        commandForV268099 = if pkgs.stdenv.hostPlatform.isAarch
+          then "fchown,fchownat"
+          else "chown,fchown,lchown,fchownat";
+        commandForV268100 = if pkgs.stdenv.hostPlatform.isAarch
+          then "fchmod,fchmodat"
+          else "chmod,fchmod,fchmodat";
+      in [
       # V-268091, V-268148
       "-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k execpriv"
       "-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k execpriv"
@@ -91,8 +105,8 @@ in
       "-a always,exit -F arch=b64 -S mount -F auid>=1000 -F auid!=unset -k privileged-mount"
 
       # V-268095
-      "-a always,exit -F arch=b32 -S rename,unlink,rmdir,renameat,unlinkat -F auid>=1000 -F auid!=unset -k delete"
-      "-a always,exit -F arch=b64 -S rename,unlink,rmdir,renameat,unlinkat -F auid>=1000 -F auid!=unset -k delete"
+      "-a always,exit -F arch=b32 -S ${commandForV268095} -F auid>=1000 -F auid!=unset -k delete"
+      "-a always,exit -F arch=b64 -S ${commandForV268095} -F auid>=1000 -F auid!=unset -k delete"
 
       # V-268096
       "-a always,exit -F arch=b32 -S init_module,finit_module,delete_module -F auid>=1000 -F auid!=unset -k module_chng"
@@ -101,18 +115,18 @@ in
       # V-268097 is defined at the bottom.
 
       # V-268098
-      "-a always,exit -F arch=b32 -S open,creat,truncate,ftruncate,openat,open_by_handle_at -F exit=-EACCES -F auid>=1000 -F auid!=unset -F key=access"
-      "-a always,exit -F arch=b32 -S open,creat,truncate,ftruncate,openat,open_by_handle_at -F exit=-EPERM -F auid>=1000 -F auid!=unset -F key=access"
-      "-a always,exit -F arch=b64 -S open,creat,truncate,ftruncate,openat,open_by_handle_at -F exit=-EACCES -F auid>=1000 -F auid!=unset -F key=access"
-      "-a always,exit -F arch=b64 -S open,creat,truncate,ftruncate,openat,open_by_handle_at -F exit=-EPERM -F auid>=1000 -F auid!=unset -F key=access"
+      "-a always,exit -F arch=b32 -S ${commandForV268098} -F exit=-EACCES -F auid>=1000 -F auid!=unset -F key=access"
+      "-a always,exit -F arch=b32 -S ${commandForV268098} -F exit=-EPERM -F auid>=1000 -F auid!=unset -F key=access"
+      "-a always,exit -F arch=b64 -S ${commandForV268098} -F exit=-EACCES -F auid>=1000 -F auid!=unset -F key=access"
+      "-a always,exit -F arch=b64 -S ${commandForV268098} -F exit=-EPERM -F auid>=1000 -F auid!=unset -F key=access"
 
       # V-268099
-      "-a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F auid>=1000 -F auid!=unset -F key=perm_mod"
-      "-a always,exit -F arch=b64 -S chown,fchown,lchown,fchownat -F auid>=1000 -F auid!=unset -F key=perm_mod"
+      "-a always,exit -F arch=b32 -S ${commandForV268099} -F auid>=1000 -F auid!=unset -F key=perm_mod"
+      "-a always,exit -F arch=b64 -S ${commandForV268099} -F auid>=1000 -F auid!=unset -F key=perm_mod"
 
       # V-268100
-      "-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=unset -k perm_mod"
-      "-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=unset -k perm_mod"
+      "-a always,exit -F arch=b32 -S ${commandForV268100} -F auid>=1000 -F auid!=unset -k perm_mod"
+      "-a always,exit -F arch=b64 -S ${commandForV268100} -F auid>=1000 -F auid!=unset -k perm_mod"
 
       # V-268119
       "--loginuid-immutable"
