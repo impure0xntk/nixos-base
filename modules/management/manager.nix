@@ -6,15 +6,12 @@ in
   config = lib.mkIf cfg.enable {
     boot.binfmt.emulatedSystems = lib.optionals cfg.enableCrossCompile ["aarch64-linux"]; # To build agent binaries for ARM architecture.
 
-    home-manager.users.${cfg.ssh.user}.programs.ssh.matchBlocks = builtins.listToAttrs (
-      map (agent: {
-        name = "${agent.hostname}";
-        value = agent;
-      }) cfg.agents
-    );
-
-    # VPN
-    networking = lib.optionalAttrs cfg.vpn.enable {
+    networking = {
+      extraHosts = let
+        hostStrings = lib.forEach cfg.agents (agent: "${agent.address} ${agent.hostname}");
+      in lib.concatStringsSep "\n" hostStrings;
+    } // lib.optionalAttrs cfg.vpn.enable {
+      # VPN
       firewall.allowedUDPPorts = [ cfg.vpn.port ]; # VPN port
       wireguard = {
         enable = true;

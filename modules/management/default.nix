@@ -51,9 +51,8 @@ in
         type = lib.types.listOf lib.types.attrs;
         example = [
           {
-            user = "nixos";
-            hostname = "localhost";
-            identityFile = [ "%d/.ssh/id_ed25519" ];
+            address = "172.20.10.1";
+            hostname = "test-host";
           }
         ];
         default = [ ];
