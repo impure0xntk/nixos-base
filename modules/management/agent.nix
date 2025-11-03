@@ -34,13 +34,19 @@ in
       nftables.enable = true;
     } // (lib.optionalAttrs cfg.vpn.enable {
       # VPN
-      firewall.allowedUDPPorts = [ cfg.vpn.port ]; # VPN port
+      firewall = {
+        allowedUDPPorts = [ cfg.vpn.port ]; # VPN port
+
+        interfaces.wg0.allowedTCPPorts = cfg.vpn.allowedTCPPorts;
+      };
+
       wireguard = {
         enable = true;
         interfaces.wg0 = {
           ips = [ cfg.vpn.address ];
           listenPort = cfg.vpn.port;
           privateKeyFile = cfg.vpn.privateKeyFile;
+          mtu = cfg.vpn.mtu;
 
           peers = cfg.vpn.peers;
         };

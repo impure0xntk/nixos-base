@@ -16,6 +16,16 @@ let
       default = 51820;
       description = "VPN port of the agent";
     };
+    allowedTCPPorts = lib.mkOption {
+      type = lib.types.listOf lib.types.int;
+      default = [ ];
+      description = "Allowed TCP ports through the VPN interface";
+    };
+    mtu = lib.mkOption {
+      type = lib.types.int;
+      default = 1420;
+      description = "MTU for WireGuard interface";
+    };
     privateKeyFile = lib.mkOption {
       type = lib.types.str;
       default = "/etc/wireguard/private.key";

@@ -19,6 +19,7 @@ in
           ips = [ cfg.vpn.address ];
           listenPort = cfg.vpn.port;
           privateKeyFile = cfg.vpn.privateKeyFile;
+          mtu = cfg.vpn.mtu;
 
           peers = cfg.vpn.peers;
         };

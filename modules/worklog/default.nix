@@ -20,7 +20,7 @@ in {
     host = lib.mkOption {
       type = lib.types.str;
       description = "Host for worklog sever. Do not change.";
-      default = config.networking.hostName;
+      default = "localhost";
     };
   };
 
@@ -46,7 +46,10 @@ in {
           };
           passwordSalt = "WGgYPNa4B4sfgJK3p61TYgWkx44rjTUY"; # wakapi github sample. This is insecure
           settings = {
-            server.port = cfg.port;
+            server = {
+              listen_ipv4 = cfg.host;
+              port = cfg.port;
+            };
             security = {
               invite_codes = false;
               disable_frontpage = true;
