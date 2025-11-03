@@ -7,6 +7,7 @@ in
     users.users.${cfg.ssh.user}.openssh.authorizedKeys.keys = cfg.ssh.pubKeys;
     services.openssh = {
       enable = true;
+      ports = [ 20022 ]; # Change SSH port to avoid automated attacks.
       settings = {
         AllowUsers = [ cfg.ssh.user ];
         PermitRootLogin = "no";
