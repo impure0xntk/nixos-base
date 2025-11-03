@@ -37,15 +37,42 @@ let
       };
     }
   ) normalUsers;
+
+  mkForwardService = port: {
+    name = "socat-forward-${toString port.local}";
+
+    value = {
+      description = "socat forward ${toString port.local} -> ${port.remote}";
+      after = [ "network-online.target" ];
+      wantedBy = [ "multi-user.target" ];
+      serviceConfig = {
+        ExecStart = "${pkgs.socat}/bin/socat TCP-LISTEN:${toString port.local},fork TCP:${port.remote}";
+        Restart = "always";
+        RestartSec = 2;
+      };
+    };
+  };
 in {
   imports = [
     ../vm
     ];
 
-  options.my.system.platform.settings.wsl.defaultUser = lib.mkOption {
-    type = lib.types.str;
-    default = config.my.system.users.adminUser;
-    description = "Default user for WSL.";
+  options.my.system.platform.settings.wsl = {
+    defaultUser = lib.mkOption {
+      type = lib.types.str;
+      default = config.my.system.users.adminUser;
+      description = "Default user for WSL.";
+    };
+    portforwarding = lib.mkOption {
+      type = lib.types.listOf lib.types.attrs;
+      example = [
+        {
+          local = 8080;
+          remote = "192.168.0.1:80";
+        }
+      ];
+      default = [ ];
+    };
   };
 
   config = {
@@ -157,7 +184,8 @@ in {
           '';
       };
 
-    } // lib.mergeAttrsList fixUserRuntimeDirServices;
+    } // (lib.mergeAttrsList fixUserRuntimeDirServices)
+    // (builtins.listToAttrs (map mkForwardService cfg.portforwarding));
 
     # Graphic hardware acceration.
     # https://github.com/nix-community/NixOS-WSL/issues/454#issuecomment-2284226904
