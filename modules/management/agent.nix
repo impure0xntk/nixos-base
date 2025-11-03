@@ -4,13 +4,14 @@ let
 in
 {
   config = lib.mkIf cfg.enable {
-    users.users.${cfg.sshUser}.openssh.authorizedKeys.keys = cfg.pubKeys;
+    users.users.${cfg.ssh.user}.openssh.authorizedKeys.keys = cfg.ssh.pubKeys;
     services.openssh = {
       enable = true;
       settings = {
-        AllowUsers = [ cfg.sshUser ];
+        AllowUsers = [ cfg.ssh.user ];
         PermitRootLogin = "no";
         PasswordAuthentication = false;
+        KbdInteractiveAuthentication = false;
       };
     };
     services.fail2ban = {
@@ -27,6 +28,27 @@ in
         maxtime = "168h";
       };
     };
-    networking.nftables.enable = true;
+
+    networking = {
+      # fail2ban
+      nftables.enable = true;
+    } // (lib.optionalAttrs cfg.vpn.enable {
+      # VPN
+      firewall.allowedUDPPorts = [ cfg.vpn.port ]; # VPN port
+      wireguard = {
+        enable = true;
+        interfaces.wg0 = {
+          ips = [ cfg.vpn.address ];
+          listenPort = cfg.vpn.port;
+          privateKeyFile = cfg.vpn.privateKeyFile;
+
+          peers = cfg.vpn.peers;
+        };
+      };
+    });
+    # Required by wireguard.
+    # Some kernel disallow runtime module loading,
+    # so in this case, first apply this without vpn.enable, and at last enable vpn.enable.
+    boot.kernelModules = [ "wireguard" ];
   };
 }
