@@ -4,6 +4,11 @@ let
 in {
   options.my.system.web-search = {
     enable = lib.mkEnableOption "Whether to enable web-scraping daemon.";
+    host = lib.mkOption {
+      type = lib.types.str;
+      description = "Host for web-scraping server.";
+      default = "127.0.0.1";
+    };
     port = lib.mkOption {
       type = lib.types.port;
       description = "Port for web-scraping server.";
@@ -40,7 +45,7 @@ in {
               ];
             };
             server = {
-              bind.address = "127.0.0.1";
+              bind.address = cfg.host; # Perhaps must be set except localhost
               port = cfg.port;
               secret_key = "dummy";
             };
