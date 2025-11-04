@@ -8,6 +8,15 @@
 }:
 with lib;
 let
+  cfg = config.my.system.security.clamav;
+
+  # See https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/services/security/clamav.nix#L13
+  toKeyValue = lib.generators.toKeyValue {
+    mkKeyValue = lib.generators.mkKeyValueDefault { } " ";
+    listsAsDuplicateKeys = true;
+  };
+  clamdConfigFile = pkgs.writeText "clamd.conf" (toKeyValue config.services.clamav.daemon.settings);
+
   # TODO: consider enable.
   # On-access scan is currently(2025/6) unstable about the following settings:
   # * exclude directory: https://github.com/Cisco-Talos/clamav/issues/1412
@@ -53,99 +62,145 @@ let
   '';
 in
 {
-  environment.systemPackages = [ purgeQuarantinedFiles ];
-  services = {
-    clamav = {
-      daemon = {
-        enable = true;
-        settings = {
-          OnAccessIncludePath = suspects.userDirectories;
-          OnAccessPrevention = false;
-          OnAccessExtraScanning = true;
-          OnAccessExcludeUname = "clamav";
-          User = "clamav";
-          ExcludePath = suspects.systemExcludeDirectories ++ suspects.userExcludeDirectories;
-          OnAccessExcludePath =
-            suspects.systemExcludeDirectories ++ suspects.userExcludeDirectories;
+  options.my.system.security.clamav = {
+    remote = {
+      enable = lib.mkEnableOption "Whether to enable ClamAV remote access.";
+      server = {
+        enable = lib.mkEnableOption "Whether to enable ClamAV antivirus.";
+        host = lib.mkOption {
+          type = lib.types.str;
+          default = "127.0.0.1";
+          description = "The host address for the ClamAV server to bind to.";
+        };
+        port = lib.mkOption {
+          type = lib.types.int;
+          default = 3310;
+          description = "The port for the ClamAV server to listen on.";
         };
       };
-      updater = {
-        enable = true;
-        interval = updateInterval;
-        settings = lib.optionalAttrs (config.networking.proxy.default != null) (
-          let
-            proxy = lib.my.separateHostAndPort config.networking.proxy.default;
-          in
-          {
-            HTTPProxyServer = proxy.schemaAndHost;
-            HTTPProxyPort = proxy.port;
-          }
-        );
-      };
-      fangfrisch = {
-        # may be slow at startup: https://github.com/flyingcircusio/fc-nixos/blob/0aea3732ed1eb55c900cfe792de6f9ca2c96d0e0/nixos/roles/antivirus.nix
-        enable = true;
-        interval = updateInterval;
-      };
-      scanner = {
-        enable = true;
-        interval = scannerInterval;
-        scanDirectories = suspects.systemDirectories ++ suspects.userDirectories;
+      client = {
+        enable = lib.mkEnableOption "Whether to enable ClamAV client utilities.";
+        host = lib.mkOption {
+          type = lib.types.str;
+          default = "127.0.0.1";
+          description = "The host address of the ClamAV server to connect to.";
+        };
+        port = lib.mkOption {
+          type = lib.types.int;
+          default = 3310;
+          description = "The port of the ClamAV server to connect to.";
+        };
       };
     };
   };
+  config = {
+    environment.systemPackages = [ purgeQuarantinedFiles ];
+    services = {
+      clamav = let
+        enableServer = if cfg.remote.enable then cfg.remote.server.enable else true;
+        enableClient = if cfg.remote.enable then cfg.remote.client.enable else true;
+      in {
+        daemon = {
+          enable = enableServer;
+          settings = {
+            OnAccessIncludePath = suspects.userDirectories;
+            OnAccessPrevention = false;
+            OnAccessExtraScanning = true;
+            OnAccessExcludeUname = "clamav";
+            User = "clamav";
+            ExcludePath = suspects.systemExcludeDirectories ++ suspects.userExcludeDirectories;
+            OnAccessExcludePath =
+              suspects.systemExcludeDirectories ++ suspects.userExcludeDirectories;
+            TCPSocket = lib.mkIf cfg.remote.enable (if cfg.remote.server.enable then cfg.remote.server.port
+              else (if cfg.remote.client.enable then cfg.remote.client.port else 3310));
+            TCPAddr = lib.mkIf cfg.remote.enable (if cfg.remote.server.enable then cfg.remote.server.host
+              else (if cfg.remote.client.enable then cfg.remote.client.host else "127.0.0.1"));
+          };
+        };
+        updater = {
+          enable = enableServer;
+          interval = updateInterval;
+          settings = lib.optionalAttrs (config.networking.proxy.default != null) (
+            let
+              proxy = lib.my.separateHostAndPort config.networking.proxy.default;
+            in
+            {
+              HTTPProxyServer = proxy.schemaAndHost;
+              HTTPProxyPort = proxy.port;
+            }
+          );
+        };
+        fangfrisch = {
+          # may be slow at startup: https://github.com/flyingcircusio/fc-nixos/blob/0aea3732ed1eb55c900cfe792de6f9ca2c96d0e0/nixos/roles/antivirus.nix
+          enable = enableServer;
+          interval = updateInterval;
+        };
+        scanner = {
+          enable = enableClient;
+          interval = scannerInterval;
+          scanDirectories = suspects.systemDirectories ++ suspects.userDirectories;
+        };
+      };
+    };
 
-  # Resource limit.
-  systemd.slices.system-clamav.sliceConfig = {
-    MemoryMax = "1600M";
-    CPUQuota = "25%";
-  };
+    # Official option does not support config generation when enable clamdscan only.
+    environment.etc."clamav/clamd.conf".source = lib.mkForce clamdConfigFile;
 
-  systemd.services.clamav-daemon.serviceConfig.ExecStartPre =
-    lib.mkIf config.services.clamav.daemon.enable (pkgs.writeShellScript "daemon-start" ''
-    # Ready for quarantine.
-    test -d ${quarantineDirectory} || install -o clamav -g clamav -m 700 -d ${quarantineDirectory}
-  '');
+    # Resource limit.
+    systemd.slices.system-clamav.sliceConfig = {
+      MemoryMax = "1600M";
+      CPUQuota = "25%";
+    };
 
-  # Override for quarantine
-  systemd.services.clamdscan.serviceConfig.ExecStart =
-    lib.mkIf config.services.clamav.scanner.enable (lib.mkForce (pkgs.writeShellScript "scan" ''
-      ${pkgs.systemd}/bin/systemd-cat --identifier=clamdscan \
-        ${config.services.clamav.package}/bin/clamdscan \
-        --multiscan --fdpass --infected --allmatch \
-        --move=${quarantineDirectory} \
-        ${lib.concatStringsSep " " config.services.clamav.scanner.scanDirectories}
-    ''));
+    systemd.services.clamav-daemon.serviceConfig = {
+      ExecStartPre =
+        lib.mkIf config.services.clamav.daemon.enable (pkgs.writeShellScript "daemon-start" ''
+        # Ready for quarantine.
+        test -d ${quarantineDirectory} || install -o clamav -g clamav -m 700 -d ${quarantineDirectory}
+      '');
+      PrivateNetwork = lib.mkForce "no"; # for remote access
+    };
 
-  systemd.services.clamav-clamonacc = lib.mkIf enableOnacc {
-    description = "ClamAV daemon (clamonacc)";
-    after = [
-      "clamav-freshclam.service"
-      "clamav-fangfrisch.service"
-      "clamav-daemon.service"
-    ];
-    requires = [ "clamav-daemon.service" ];
-    wantedBy = [ "multi-user.target" ];
-    restartTriggers = [ "/etc/clamav/clamd.conf" ];
+    # Override for quarantine
+    systemd.services.clamdscan.serviceConfig.ExecStart =
+      lib.mkIf config.services.clamav.scanner.enable (lib.mkForce (pkgs.writeShellScript "scan" ''
+        ${pkgs.systemd}/bin/systemd-cat --identifier=clamdscan \
+          ${config.services.clamav.package}/bin/clamdscan \
+          --multiscan --fdpass --infected --allmatch \
+          --move=${quarantineDirectory} \
+          ${lib.concatStringsSep " " config.services.clamav.scanner.scanDirectories}
+      ''));
 
-    serviceConfig = {
-      Type = "simple";
-      # https://bbs.archlinux.org/viewtopic.php?id=267222
-      ExecStart = pkgs.writeShellScript "onacc-start" ''
-        # Wait for clamd to start.
-        while [ ! -S /run/clamav/clamd.ctl ]; do
-          sleep 1
-        done
+    systemd.services.clamav-clamonacc = lib.mkIf enableOnacc {
+      description = "ClamAV daemon (clamonacc)";
+      after = [
+        "clamav-freshclam.service"
+        "clamav-fangfrisch.service"
+        "clamav-daemon.service"
+      ];
+      requires = [ "clamav-daemon.service" ];
+      wantedBy = [ "multi-user.target" ];
+      restartTriggers = [ "/etc/clamav/clamd.conf" ];
 
-        ${pkgs.systemd}/bin/systemd-cat --identifier=clamav-clamonacc \
-          ${pkgs.clamav}/bin/clamonacc -F --fdpass \
-          --move=${quarantineDirectory}
-      '';
-      PrivateTmp = "yes";
-      PrivateDevices = "yes";
-      PrivateNetwork = "yes";
-      # To terminate quickly
-      TimeoutStopSec = 3;
+      serviceConfig = {
+        Type = "simple";
+        # https://bbs.archlinux.org/viewtopic.php?id=267222
+        ExecStart = pkgs.writeShellScript "onacc-start" ''
+          # Wait for clamd to start.
+          while [ ! -S /run/clamav/clamd.ctl ]; do
+            sleep 1
+          done
+
+          ${pkgs.systemd}/bin/systemd-cat --identifier=clamav-clamonacc \
+            ${pkgs.clamav}/bin/clamonacc -F --fdpass \
+            --move=${quarantineDirectory}
+        '';
+        PrivateTmp = "yes";
+        PrivateDevices = "yes";
+        PrivateNetwork = "yes";
+        # To terminate quickly
+        TimeoutStopSec = 3;
+      };
     };
   };
 }
