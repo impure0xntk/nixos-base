@@ -63,6 +63,11 @@ let
 in
 {
   options.my.system.security.clamav = {
+    memoryMax = lib.mkOption {
+      type = lib.types.str;
+      default = "16000M";
+      description = "The maximum memory usage for ClamAV remote access.";
+    };
     remote = {
       enable = lib.mkEnableOption "Whether to enable ClamAV remote access.";
       server = {
@@ -148,28 +153,49 @@ in
 
     # Resource limit.
     systemd.slices.system-clamav.sliceConfig = {
-      MemoryMax = "1600M";
+      MemoryMax = cfg.memoryMax;
       CPUQuota = "25%";
     };
 
-    systemd.services.clamav-daemon.serviceConfig = {
+    systemd.services.clamav-daemon.serviceConfig = lib.mkIf config.services.clamav.daemon.enable {
       ExecStartPre =
         lib.mkIf config.services.clamav.daemon.enable (pkgs.writeShellScript "daemon-start" ''
         # Ready for quarantine.
         test -d ${quarantineDirectory} || install -o clamav -g clamav -m 700 -d ${quarantineDirectory}
       '');
       PrivateNetwork = lib.mkForce "no"; # for remote access
+      Restart = "on-failure";
     };
 
-    # Override for quarantine
-    systemd.services.clamdscan.serviceConfig.ExecStart =
-      lib.mkIf config.services.clamav.scanner.enable (lib.mkForce (pkgs.writeShellScript "scan" ''
-        ${pkgs.systemd}/bin/systemd-cat --identifier=clamdscan \
-          ${config.services.clamav.package}/bin/clamdscan \
-          --multiscan --fdpass --infected --allmatch \
-          --move=${quarantineDirectory} \
-          ${lib.concatStringsSep " " config.services.clamav.scanner.scanDirectories}
-      ''));
+    # Official config cannot set only clamdscan.
+    systemd.timers.clamdscan = lib.mkIf config.services.clamav.scanner.enable {
+      description = "Timer for ClamAV virus scanner";
+      wantedBy = [ "timers.target" ];
+      timerConfig = {
+        OnCalendar = config.services.clamav.scanner.interval;
+        Unit = "clamdscan.service";
+      };
+    };
+    systemd.services.clamdscan = lib.mkIf config.services.clamav.scanner.enable (lib.mkForce {
+      description = "ClamAV virus scanner";
+      documentation = [ "man:clamdscan(1)" ];
+      after = lib.optionals config.services.clamav.updater.enable [ "clamav-freshclam.service" ];
+      wants = lib.optionals config.services.clamav.updater.enable [ "clamav-freshclam.service" ];
+
+      serviceConfig = {
+        Type = "oneshot";
+        Slice = "system-clamav.slice";
+
+        # Override for quarantine
+        ExecStart = pkgs.writeShellScript "scan" ''
+          ${pkgs.systemd}/bin/systemd-cat --identifier=clamdscan \
+            ${config.services.clamav.package}/bin/clamdscan \
+            --multiscan --fdpass --infected --allmatch \
+            --move=${quarantineDirectory} \
+            ${lib.concatStringsSep " " config.services.clamav.scanner.scanDirectories}
+        '';
+      };
+    });
 
     systemd.services.clamav-clamonacc = lib.mkIf enableOnacc {
       description = "ClamAV daemon (clamonacc)";
