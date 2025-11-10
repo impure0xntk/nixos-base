@@ -55,6 +55,16 @@ in
           default = config.my.system.users.adminUser;
           description = "SSH user to connect agent";
         };
+        portForwarding = lib.mkOption {
+          type = lib.types.listOf lib.types.attrs;
+          example = [
+            {
+              local = 8080;
+              remote = "192.168.0.1:80";
+            }
+          ];
+          default = [ ];
+        };
       };
       vpn = vpnOption;
       agents = lib.mkOption {

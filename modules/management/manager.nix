@@ -29,5 +29,30 @@ in
     # Some kernel disallow runtime module loading,
     # so in this case, first apply this without vpn.enable, and at last enable vpn.enable.
     boot.kernelModules = [ "wireguard" ];
+
+    # ssh port forwarding using autossh
+    services.autossh.sessions = lib.mkIf (cfg.ssh.portForwarding != []) (
+      let
+        groupedByHost = lib.foldl' (acc: v: 
+          let
+            existing = acc.${v.host} or [];
+          in acc // { ${v.host} = existing ++ [v]; }
+        ) {} cfg.ssh.portForwarding;
+
+        sessions = lib.mapAttrsToList (host: forwards: {
+          name = "ssh-forward-${host}";
+          user = cfg.ssh.user;
+          extraArguments = lib.concatStringsSep " " (
+            [
+              "-N"
+              "-S none" # to avoid conflicts with other ssh connections using ControlMaster. If remove this, autossh exits 0 soon.
+              "-o ExitOnForwardFailure=yes"
+            ] ++ lib.forEach forwards (f: "-L ${toString f.local}:${f.remote}") ++ [
+              host
+            ]
+          );
+        }) groupedByHost;
+      in sessions
+    );
   };
 }

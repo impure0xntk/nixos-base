@@ -63,7 +63,7 @@ in {
       default = config.my.system.users.adminUser;
       description = "Default user for WSL.";
     };
-    portforwarding = lib.mkOption {
+    portForwarding = lib.mkOption {
       type = lib.types.listOf lib.types.attrs;
       example = [
         {
@@ -185,7 +185,7 @@ in {
       };
 
     } // (lib.mergeAttrsList fixUserRuntimeDirServices)
-    // (builtins.listToAttrs (map mkForwardService cfg.portforwarding));
+    // (builtins.listToAttrs (map mkForwardService cfg.portForwarding));
 
     # Graphic hardware acceration.
     # https://github.com/nix-community/NixOS-WSL/issues/454#issuecomment-2284226904
