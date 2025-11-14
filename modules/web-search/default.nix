@@ -45,7 +45,7 @@ in {
               ];
             };
             server = {
-              bind.address = cfg.host; # Perhaps must be set except localhost
+              bind_address = cfg.host; # Perhaps must be set except localhost
               port = cfg.port;
               secret_key = "dummy";
             };
