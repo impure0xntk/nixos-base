@@ -43,12 +43,6 @@ let
     '';
   };
 
-  mcp-serer-remote-group = pkgs.writeShellScriptBin "mcp-remote-group" ''
-    ${pkgs.mcp-server-remote}/bin/mcp-remote \
-      http://${cfg.hub.host}:${builtins.toString cfg.hub.port}/v0/groups/''${1:-input group}/mcp \
-      --allow-http
-  '';
-
   # Original server configuration files (will be transformed at runtime)
   # Use "cut -d, -fN" to separate name and path in shell script
   serverFiles = lib.mapAttrsToList (serverName: serverConfig:
@@ -81,10 +75,10 @@ in
       default = [ ];
       description = "List of environment files to source before starting mcpjungle.";
     };
-    useSopsNix = lib.mkOption {
-      type = lib.types.bool;
-      default = true;
-      description = "Whether using sops. If enabled start mcpjungle after sops-nix.service";
+    sharedFiles = mkOption {
+      type = lib.types.listOf lib.types.path;
+      default = [ ];
+      description = "List of files to be shared into mcpjungle container.";
     };
   };
 
@@ -92,6 +86,13 @@ in
     boot.enableContainers = true;
     containers.mcpjungle = {
       autoStart = true;
+      bindMounts = lib.listToAttrs (map (f: {
+        name = f;
+        value = {
+          hostPath = f;
+          isReadOnly = true;
+        };
+      }) cfg.hub.sharedFiles);
 
       config = {config, pkgs, lib, ...}: {
         imports = [ ../core/minimal.nix ];
@@ -104,16 +105,11 @@ in
         # For CLI
         environment.systemPackages = [
           mcpJungleWithRuntime
-          mcp-serer-remote-group
         ];
 
         systemd.services = {
-          "mcpjungle-ready" = rec {
+          "mcpjungle-ready" = {
             description = "Ready for mcpjungle";
-            after = lib.optionals cfg.hub.useSopsNix [
-              "sops-nix.service"
-            ];
-            requires = after;
             serviceConfig = let script = pkgs.writeShellScriptBin "ready-for-mcpjungle" ''
               ${pkgs.coreutils}/bin/mkdir -p ${workingDirectory}/servers
               rm -rf ${workingDirectory}/mcp*.db 2>/dev/null || true
