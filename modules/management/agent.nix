@@ -36,7 +36,10 @@ in
     } // (lib.optionalAttrs cfg.vpn.enable {
       # VPN
       firewall = {
-        allowedUDPPorts = [ cfg.vpn.port ]; # VPN port
+        allowedUDPPorts = [
+          cfg.vpn.port
+          53 # DNS port for VPN use
+        ]; # VPN port
 
         interfaces.wg0.allowedTCPPorts = cfg.vpn.allowedTCPPorts;
       };

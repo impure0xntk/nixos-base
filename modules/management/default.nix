@@ -26,6 +26,11 @@ let
       default = 1420;
       description = "MTU for WireGuard interface";
     };
+    dnsServers = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
+      description = "DNS servers to use over the VPN";
+    };
     privateKeyFile = lib.mkOption {
       type = lib.types.str;
       default = "/etc/wireguard/private.key";

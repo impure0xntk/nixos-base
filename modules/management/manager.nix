@@ -15,14 +15,14 @@ in
       firewall.allowedUDPPorts = [ cfg.vpn.port ]; # VPN port
       wireguard = {
         enable = true;
-        interfaces.wg0 = {
-          ips = [ cfg.vpn.address ];
-          listenPort = cfg.vpn.port;
-          privateKeyFile = cfg.vpn.privateKeyFile;
-          mtu = cfg.vpn.mtu;
+      };
+      wg-quick.interfaces.wg0 = {
+        address = [ cfg.vpn.address ];
+        privateKeyFile = cfg.vpn.privateKeyFile;
+        mtu = cfg.vpn.mtu;
+        dns = cfg.vpn.dnsServers;
 
-          peers = cfg.vpn.peers;
-        };
+        peers = cfg.vpn.peers;
       };
     };
     # Required by wireguard.
