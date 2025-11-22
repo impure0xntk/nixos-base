@@ -4,24 +4,19 @@ let
 in {
   options.my.system.web-browsing = {
     enable = lib.mkEnableOption "Whether to enable web-browsing daemon.";
-    adguardHome = {
-      enable = lib.mkEnableOption "Whether to enable AdGuard Home for ad blocking.";
+    dns = {
+      enable = lib.mkEnableOption "Whether to enable DNS server for ad-blocking.";
       bindAddress = lib.mkOption {
         type = lib.types.str;
-        description = "Bind address for AdGuard Home.";
+        description = "Bind address for DNS server.";
         default = "127.0.0.1";
-      };
-      port = lib.mkOption {
-        type = lib.types.port;
-        description = "Port for AdGuard Home.";
-        default = 3000;
       };
     };
   };
 
   config = lib.mkIf cfg.enable {
     boot.enableContainers = true;
-    containers.adguardhome = {
+    containers.dns-server = {
       autoStart = true;
 
       config = {config, pkgs, lib, ...}: {
@@ -32,35 +27,81 @@ in {
           SystemMaxUse=100M
         '';
 
-        services.adguardhome = {
-          enable = cfg.adguardHome.enable;
-          host = cfg.adguardHome.bindAddress;
-          port = cfg.adguardHome.port;
+        services.blocky = {
+          enable = cfg.dns.enable;
           settings = {
-            http = {
-              # You can select any ip and port, just make sure to open firewalls where needed
-              address = "${cfg.adguardHome.bindAddress}:${toString cfg.adguardHome.port}";
+            log = {
+              level = "debug";
+              privacy = true;
             };
-            dns = {
-              bind_hosts = [ cfg.adguardHome.bindAddress ];
-              port = 53;
-              upstream_dns = [
-                "9.9.9.9"
-              ];
+            ports = {
+              dns = 53;
+              http = 4000;
+              https = 443;
+              tls = 853;
             };
-            filtering = {
-              protection_enabled = true;
-              filtering_enabled = true;
-
-              parental_enabled = false;  # Parental control-based DNS requests filtering.
-              safe_search = {
-                enabled = false;  # Enforcing "Safe search" option for search engines, when possible.
+            upstreams = {
+              strategy = "strict";
+              init.strategy = "fast";
+              groups = {
+                default = [
+                  "tcp-tls:dns.quad9.net"
+                ];
               };
             };
-            # The following notation uses map
-            # to not have to manually create {enabled = true; url = "";} for every filter
-            # This is, however, fully optional
-            filters = map (url: { enabled = true; url = url; }) (import ./adh-filters.nix { inherit lib; });
+            blocking = {
+              loading.strategy = "failOnError";
+              denylists = {
+                general = [
+                  "https://sebsauvage.net/hosts/hosts" # Includes Steven Black's Unified Hosts list
+                  "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn-social-only/hosts" # fakenews + gambling + porn + social
+                  "https://big.oisd.nl/domainswild"
+                  "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/hosts/ultimate.txt"
+                ];
+                ads = [
+                  "https://blocklistproject.github.io/Lists/ads.txt"
+                  "https://v.firebog.net/hosts/Admiral.txt"
+                  # Regional (Japan)
+                  "https://warui.intaa.net/adhosts/hosts.txt"
+                  "https://raw.githubusercontent.com/lawnn/adaway-hosts/refs/heads/master/hosts.txt"
+                  "https://raw.githubusercontent.com/PepperCat-YamanekoVillage/LINE-Ad-Block/refs/heads/main/list.txt" # LINE Ads
+                ];
+                tracking = [
+                  "https://blocklistproject.github.io/Lists/tracking.txt"
+                  "https://v.firebog.net/hosts/Prigent-Ads.txt"
+                ];
+                malicious = [
+                  "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/hosts/tif.txt"
+                  "https://s3.amazonaws.com/lists.disconnect.me/simple_malvertising.txt"
+                  "https://v.firebog.net/hosts/Prigent-Malware.txt"
+                  "https://v.firebog.net/hosts/Prigent-Phishing.txt"
+                  "https://v.firebog.net/hosts/Prigent-Crypto.txt"
+                ];
+                annoyance = [
+                  "https://nsfw.oisd.nl/domainswild"
+                  "https://v.firebog.net/hosts/Prigent-Adult.txt"
+                  "https://raw.githubusercontent.com/bigdargon/hostsVN/refs/heads/master/hosts"
+                  "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/wildcard/nsfw.txt"
+                  "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/wildcard/gambling.txt"
+                ];
+                misc = [
+                  "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/wildcard/doh-vpn-proxy-bypass.txt"
+                  "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/wildcard/dyndns.txt"
+                  "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/wildcard/spam-tlds-onlydomains.txt"
+                ];
+              };
+              clientGroupsBlock = {
+                default = [
+                  "general"
+                  "ads"
+                  "tracking"
+                  "malicious"
+                  "annoyance"
+                  "misc"
+                ];
+              };
+            };
+            queryLog.type = "console";
           };
         };
       };
