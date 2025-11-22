@@ -45,7 +45,7 @@ in {
               bind_hosts = [ cfg.adguardHome.bindAddress ];
               port = 53;
               upstream_dns = [
-                "tls://dns.quad9.net"
+                "9.9.9.9"
               ];
             };
             filtering = {
