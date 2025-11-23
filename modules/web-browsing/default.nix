@@ -74,16 +74,18 @@ in {
               };
             };
             blocking = {
-              loading.strategy = "failOnError";
+              loading.strategy = "fast";
               denylists = {
                 general = [
-                  "https://sebsauvage.net/hosts/hosts" # Includes Steven Black's Unified Hosts list
-                  "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-only/hosts" # fakenews + gambling
+                  "https://sebsauvage.net/hosts/hosts"
+                  "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling/hosts" # Unified + fakenews + gambling
                   "https://raw.githubusercontent.com/sjhgvr/oisd/main/domainswild2_big.txt"
                   "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/hosts/ultimate.txt"
                 ];
                 ads = [
                   "https://blocklistproject.github.io/Lists/ads.txt"
+                  # Youtube
+                  "https://raw.githubusercontent.com/kboghdady/youTube_ads_4_pi-hole/master/youtubelist.txt"
                   # Regional Ads (Japan)
                   "https://warui.intaa.net/adhosts/hosts.txt"
                   "https://raw.githubusercontent.com/lawnn/adaway-hosts/refs/heads/master/hosts.txt"
