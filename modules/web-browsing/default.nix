@@ -1,6 +1,7 @@
 { config, lib, ... }:
 let
   cfg = config.my.system.web-browsing;
+  certDir = "/etc/ssl/blocky";
 in {
   options.my.system.web-browsing = {
     enable = lib.mkEnableOption "Whether to enable web-browsing daemon.";
@@ -10,6 +11,22 @@ in {
         type = lib.types.str;
         description = "Bind address for DNS server.";
         default = "127.0.0.1";
+      };
+      certFile = lib.mkOption {
+        type = lib.types.nullOr lib.types.path;
+        description = "Path to TLS certificate file for DNS over TLS.";
+        default = null;
+      };
+      keyFile = lib.mkOption {
+        type = lib.types.nullOr lib.types.path;
+        description = "Path to TLS key file for DNS over TLS.";
+        default = null;
+      };
+      reloadCommand = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        description = "Command to reload the DNS server configuration. This is useful to apply new TLS certificates after renewal.";
+        # To load new TLS certificates after renewal with systemd-creds
+        default = "machinectl shell dns-server /run/current-system/sw/bin/systemctl restart blocky.service";
       };
     };
     blocklists = lib.mkOption {
@@ -43,6 +60,18 @@ in {
     containers.dns-server = {
       autoStart = true;
 
+      bindMounts = {
+        "${certDir}/cert.pem" = lib.mkIf (cfg.dns.certFile != null) {
+          hostPath = cfg.dns.certFile;
+          isReadOnly = true;
+        };
+        "${certDir}/key.pem" = lib.mkIf (cfg.dns.keyFile != null) {
+          hostPath = cfg.dns.keyFile;
+          isReadOnly = true;
+        };
+      };
+
+
       config = {config, pkgs, lib, ...}: {
         imports = [ ../core/minimal.nix ];
         system.stateVersion = config.system.nixos.release;
@@ -51,9 +80,20 @@ in {
           SystemMaxUse=100M
         '';
 
+        # Must use systemd-creds to load TLS credentials because of systemd sandboxing
+        # Similar: https://mynixos.com/nixpkgs/option/services.godns.settings
+        systemd.services.blocky.serviceConfig = {
+          LoadCredential = [
+            "cert.pem:${certDir}/cert.pem"
+            "key.pem:${certDir}/key.pem"
+          ];
+        };
+
         services.blocky = {
           enable = cfg.dns.enable;
           settings = {
+            certFile = lib.optionalString (cfg.dns.certFile != null) "/run/credentials/blocky.service/cert.pem";
+            keyFile = lib.optionalString (cfg.dns.keyFile != null) "/run/credentials/blocky.service/key.pem";
             log = {
               level = "debug";
               privacy = true;
@@ -69,7 +109,7 @@ in {
               init.strategy = "fast";
               groups = {
                 default = [
-                  "tcp-tls:dns.quad9.net"
+                  "https://dns11.quad9.net/dns-query" # Quad9 DoH Secured w/ECS: Malware blocking, DNSSEC Validation, ECS enabled
                 ];
               };
             };
