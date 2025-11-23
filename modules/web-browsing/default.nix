@@ -12,6 +12,30 @@ in {
         default = "127.0.0.1";
       };
     };
+    blocklists = lib.mkOption {
+      type = lib.types.listOf (
+        lib.types.submodule {
+          options = {
+            host = lib.mkOption {
+              type = lib.types.str;
+              description = "Host to block.";
+            };
+            category = lib.mkOption {
+              type = lib.types.listOf lib.types.str;
+              description = "Categories for the blocked host.";
+              default = [ ];
+            };
+          };
+        }
+      );
+      default = [];
+      example = [
+        {
+          host = "localhost";
+          category = [ "default" "strict" ];
+        }
+      ];
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -54,40 +78,40 @@ in {
               denylists = {
                 general = [
                   "https://sebsauvage.net/hosts/hosts" # Includes Steven Black's Unified Hosts list
-                  "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn-social-only/hosts" # fakenews + gambling + porn + social
-                  "https://big.oisd.nl/domainswild"
+                  "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-only/hosts" # fakenews + gambling
+                  "https://raw.githubusercontent.com/sjhgvr/oisd/main/domainswild2_big.txt"
                   "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/hosts/ultimate.txt"
                 ];
                 ads = [
                   "https://blocklistproject.github.io/Lists/ads.txt"
-                  "https://v.firebog.net/hosts/Admiral.txt"
-                  # Regional (Japan)
+                  # Regional Ads (Japan)
                   "https://warui.intaa.net/adhosts/hosts.txt"
                   "https://raw.githubusercontent.com/lawnn/adaway-hosts/refs/heads/master/hosts.txt"
                   "https://raw.githubusercontent.com/PepperCat-YamanekoVillage/LINE-Ad-Block/refs/heads/main/list.txt" # LINE Ads
                 ];
                 tracking = [
                   "https://blocklistproject.github.io/Lists/tracking.txt"
-                  "https://v.firebog.net/hosts/Prigent-Ads.txt"
+                  "https://github.com/KnightmareVIIVIIXC/AIO-Firebog-Blocklists/raw/main/hostslists/firebogtrack.txt"
                 ];
                 malicious = [
                   "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/hosts/tif.txt"
                   "https://s3.amazonaws.com/lists.disconnect.me/simple_malvertising.txt"
-                  "https://v.firebog.net/hosts/Prigent-Malware.txt"
-                  "https://v.firebog.net/hosts/Prigent-Phishing.txt"
-                  "https://v.firebog.net/hosts/Prigent-Crypto.txt"
+                  "https://github.com/KnightmareVIIVIIXC/AIO-Firebog-Blocklists/raw/main/hostslists/firebogmal.txt"
                 ];
                 annoyance = [
-                  "https://nsfw.oisd.nl/domainswild"
-                  "https://v.firebog.net/hosts/Prigent-Adult.txt"
+                  "https://github.com/KnightmareVIIVIIXC/AIO-Firebog-Blocklists/raw/main/hostslists/firebogsus.txt"
                   "https://raw.githubusercontent.com/bigdargon/hostsVN/refs/heads/master/hosts"
-                  "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/wildcard/nsfw.txt"
                   "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/wildcard/gambling.txt"
                 ];
                 misc = [
                   "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/wildcard/doh-vpn-proxy-bypass.txt"
                   "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/wildcard/dyndns.txt"
                   "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/wildcard/spam-tlds-onlydomains.txt"
+                ];
+                strict = [
+                  "https://raw.githubusercontent.com/sjhgvr/oisd/main/domainswild2_nsfw.txt"
+                  "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/wildcard/nsfw.txt"
+                  "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/porn-social-only/hosts" # porn + social
                 ];
               };
               clientGroupsBlock = {
@@ -98,8 +122,9 @@ in {
                   "malicious"
                   "annoyance"
                   "misc"
-                ];
-              };
+                ]; } // (lib.optionalAttrs (lib.length cfg.blocklists > 0) (
+                lib.listToAttrs (map (item: lib.nameValuePair item.host item.category) cfg.blocklists)
+              ));
             };
             queryLog.type = "console";
           };
