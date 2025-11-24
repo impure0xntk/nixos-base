@@ -103,9 +103,9 @@ in {
             };
             ports = {
               dns = 53;
-              http = 4000;
-              https = 443;
-              tls = 853;
+              # http = 4000;
+              # https = 8443; # to avoid conflict with reverse-proxy
+              # tls = 853;
             };
             upstreams = {
               strategy = "strict";
