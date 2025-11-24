@@ -1,33 +1,36 @@
 { config, lib, ... }:
 let
-  cfg = config.my.system.web-browsing;
+  cfg = config.my.system.dns;
   certDir = "/etc/ssl/blocky";
 in {
-  options.my.system.web-browsing = {
-    enable = lib.mkEnableOption "Whether to enable web-browsing daemon.";
-    dns = {
-      enable = lib.mkEnableOption "Whether to enable DNS server for ad-blocking.";
-      bindAddress = lib.mkOption {
-        type = lib.types.str;
-        description = "Bind address for DNS server.";
-        default = "127.0.0.1";
-      };
-      certFile = lib.mkOption {
-        type = lib.types.nullOr lib.types.path;
-        description = "Path to TLS certificate file for DNS over TLS.";
-        default = null;
-      };
-      keyFile = lib.mkOption {
-        type = lib.types.nullOr lib.types.path;
-        description = "Path to TLS key file for DNS over TLS.";
-        default = null;
-      };
-      reloadCommand = lib.mkOption {
-        type = lib.types.nullOr lib.types.str;
-        description = "Command to reload the DNS server configuration. This is useful to apply new TLS certificates after renewal.";
-        # To load new TLS certificates after renewal with systemd-creds
-        default = "machinectl shell dns-server /run/current-system/sw/bin/systemctl restart blocky.service";
-      };
+  options.my.system.dns = {
+    enable = lib.mkEnableOption "Whether to enable DNS server for ad-blocking.";
+    bindAddress = lib.mkOption {
+      type = lib.types.str;
+      description = "Bind address for DNS server.";
+      default = "127.0.0.1";
+    };
+    certFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      description = "Path to TLS certificate file for DNS over TLS.";
+      default = null;
+    };
+    keyFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      description = "Path to TLS key file for DNS over TLS.";
+      default = null;
+    };
+    reloadCommand = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      description = "Command to reload the DNS server configuration. This is useful to apply new TLS certificates after renewal.";
+      # To load new TLS certificates after renewal with systemd-creds
+      default = "machinectl shell dns-server /run/current-system/sw/bin/systemctl restart blocky.service";
+    };
+    customDomains = lib.mkOption {
+      type = lib.types.attrsOf lib.types.str;
+      description = "Custom domains to resolve to specific IP addresses.";
+      default = {};
+      example = { "mycustomdomain.local" = "10.0.0.1"; "anotherdomain.test" = "10.0.0.2"; };
     };
     blocklists = lib.mkOption {
       type = lib.types.listOf (
@@ -61,12 +64,12 @@ in {
       autoStart = true;
 
       bindMounts = {
-        "${certDir}/cert.pem" = lib.mkIf (cfg.dns.certFile != null) {
-          hostPath = cfg.dns.certFile;
+        "${certDir}/cert.pem" = lib.mkIf (cfg.certFile != null) {
+          hostPath = cfg.certFile;
           isReadOnly = true;
         };
-        "${certDir}/key.pem" = lib.mkIf (cfg.dns.keyFile != null) {
-          hostPath = cfg.dns.keyFile;
+        "${certDir}/key.pem" = lib.mkIf (cfg.keyFile != null) {
+          hostPath = cfg.keyFile;
           isReadOnly = true;
         };
       };
@@ -90,10 +93,10 @@ in {
         };
 
         services.blocky = {
-          enable = cfg.dns.enable;
+          enable = cfg.enable;
           settings = {
-            certFile = lib.optionalString (cfg.dns.certFile != null) "/run/credentials/blocky.service/cert.pem";
-            keyFile = lib.optionalString (cfg.dns.keyFile != null) "/run/credentials/blocky.service/key.pem";
+            certFile = lib.optionalString (cfg.certFile != null) "/run/credentials/blocky.service/cert.pem";
+            keyFile = lib.optionalString (cfg.keyFile != null) "/run/credentials/blocky.service/key.pem";
             log = {
               level = "debug";
               privacy = true;
@@ -113,6 +116,7 @@ in {
                 ];
               };
             };
+            customDNS.mapping = cfg.customDomains;
             blocking = {
               loading.strategy = "fast";
               denylists = {
