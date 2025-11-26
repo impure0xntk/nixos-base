@@ -1,9 +1,9 @@
 { config, pkgs, lib, ... }:
 let
-  cfg = config.my.system.knowledgebase;
+  cfg = config.my.system.memo;
 in {
-  options.my.system.knowledgebase = {
-    enable = lib.mkEnableOption "Whether to enable knowledgebase (Memos server).";
+  options.my.system.memo = {
+    enable = lib.mkEnableOption "Whether to enable memo (Memos server).";
     host = lib.mkOption {
       type = lib.types.str;
       description = "Host address for Memos server access.";
@@ -24,7 +24,7 @@ in {
   config = lib.mkIf cfg.enable {
     boot.enableContainers = true;
 
-    containers.knowledgebase = {
+    containers.memo = {
       autoStart = true;
       config = { config, ... }: {
         imports = [ ../core/minimal.nix ];
