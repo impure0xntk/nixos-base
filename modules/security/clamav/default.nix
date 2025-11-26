@@ -97,6 +97,17 @@ in
         };
       };
     };
+    notification = {
+      enable = lib.mkEnableOption "Whether to enable notification after detecting infected files.";
+      commandGenerator = lib.mkOption {
+        type = lib.types.str;
+        default = "true";
+        description = ''
+          The command to execute for notification when an infected file is detected.
+          The result of the scan command will be provided via standard input.
+        '';
+      };
+    };
   };
   config = {
     environment.systemPackages = [ purgeQuarantinedFiles ];
@@ -187,13 +198,27 @@ in
         Slice = "system-clamav.slice";
 
         # Override for quarantine
-        ExecStart = pkgs.writeShellScript "scan" ''
-          ${pkgs.systemd}/bin/systemd-cat --identifier=clamdscan \
-            ${config.services.clamav.package}/bin/clamdscan \
-            --multiscan --fdpass --infected --allmatch \
-            --move=${quarantineDirectory} \
-            ${lib.concatStringsSep " " config.services.clamav.scanner.scanDirectories}
-        '';
+        ExecStart = let
+          scanCommand = additionalOptions: ''
+            ${pkgs.systemd}/bin/systemd-cat --identifier=clamdscan \
+              ${config.services.clamav.package}/bin/clamdscan \
+              --multiscan --fdpass --infected --allmatch \
+              --move=${quarantineDirectory} \
+              ${additionalOptions} \
+              ${lib.concatStringsSep " " config.services.clamav.scanner.scanDirectories}'';
+          scanAndNotifyCommand = if cfg.notification.enable
+            then ''
+              TMPFILE="$(mktemp)"
+              ${scanCommand "--log=\"$TMPFILE\""}
+              RETURN_CODE=$?
+              cat "$TMPFILE" >&2
+              if test $RETURN_CODE -ne 0 && test -s "$TMPFILE"; then
+                cat "$TMPFILE" | ${cfg.notification.commandGenerator}
+              else
+                echo "No output found."
+              fi
+            '' else scanCommand "";
+        in pkgs.writeShellScript "scan" scanAndNotifyCommand;
       };
     });
 
