@@ -7,7 +7,7 @@
 }:
 let
   cfg = config.my.system.gpu;
-  purePkgs = import <nixpkgs> { config.allowUnfree = true; }; # to avoid build linux because it's build is too slow
+  purePkgs = pkgs.pure; # to avoid build linux because it's build is too slow
 in
 {
   options.my.system.gpu = {

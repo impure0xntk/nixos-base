@@ -5,7 +5,7 @@
   ...
 }:
 let
-  purePkgs = import <nixpkgs> { }; # to avoid build ungoogled-chromium because it uses too much RAM
+  purePkgs = pkgs.pure; # to avoid build ungoogled-chromium because it uses too much RAM
 in
 {
   arxiv = {
