@@ -83,6 +83,7 @@ in {
       enable = true;
       defaultUser = cfg.defaultUser;
       useWindowsDriver = true;
+      interop.register = true;
 
       wslConf = {
         network.generateHosts = false;

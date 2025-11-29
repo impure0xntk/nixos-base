@@ -52,7 +52,7 @@ in
     # V-268083
     services.openssh.banner = interactiveLoginNotice;
     # V-268084
-    services.xserver.displayManager.gdm.banner = interactiveLoginNotice;
+    services.displayManager.gdm.banner = interactiveLoginNotice;
 
     # V-268085
     security.pam.loginLimits = [
