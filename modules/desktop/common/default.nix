@@ -23,10 +23,9 @@ in {
       enable = true;
       settings = {
         default_session = {
-          command = "${pkgs.greetd.tuigreet}/bin/tuigreet --asterisks --time --remember --remember-session --cmd 'sx'";
+          command = "${pkgs.tuigreet}/bin/tuigreet --asterisks --time --remember --remember-session --cmd 'sx'";
         };
       };
-      vt = 7; # required for display session(tty7)
     };
     # startx cannot work with SCUDO memory allocator, so replace to sx.
     services.xserver.displayManager.sx.enable = true;
