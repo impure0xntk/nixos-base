@@ -42,6 +42,7 @@
       url = "github:impure0xntk/nix-pkgs";
       inputs = {
         nixpkgs.follows = "nixpkgs";
+        nixpkgs-unstable.follows = "nixpkgs-unstable";
         flake-utils.follows = "flake-utils";
       };
     };
