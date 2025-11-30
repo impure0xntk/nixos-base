@@ -194,7 +194,6 @@ in
     containers.ai-chat = lib.mkIf cfg.chat.enable {
       autoStart = true;
 
-      # bindMounts."${environmentDir}/env" = lib.mkIf (cfg.proxy.environmentFilePath != null) {
       bindMounts."/run/credentials/open-webui.service/env" = lib.mkIf (cfg.chat.environmentFilePath != null) {
         hostPath = cfg.chat.environmentFilePath;
         isReadOnly = true;
