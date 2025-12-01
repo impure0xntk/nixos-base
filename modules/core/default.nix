@@ -28,7 +28,6 @@ in
       stateVersion = config.system.nixos.release;
       activatable = cfg.mutableSystem;
       switch.enable = cfg.mutableSystem;
-      rebuild.enableNg = cfg.mutableSystem;
     };
     nix = {
       enable = config.system.activatable;
