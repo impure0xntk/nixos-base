@@ -8,9 +8,16 @@
       };
     }
   ];
-  "kat-coder-pro" = [
+  "nova-2-lite" = [
     {
-      model = "openrouter/kwaipilot/kat-coder-pro:free";
+      model = "openrouter/amazon/nova-2-lite-v1:free";
+      params = {
+      };
+    }
+  ];
+  text-to-speech-playai-tts = [
+    {
+      model = "groq/playai-tts";
       params = {
       };
     }

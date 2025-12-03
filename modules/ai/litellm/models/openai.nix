@@ -65,4 +65,18 @@ in
       } // githubCopilotDummySettings;
     }
   ];
+  speech-to-text-whisper-large-v3 = [
+    {
+      model = "groq/whisper-large-v3";
+      params = {
+      };
+    }
+  ];
+  speech-to-text-whisper-large-v3-turbo = [
+    {
+      model = "groq/whisper-large-v3-turbo";
+      params = {
+      };
+    }
+  ];
 }
