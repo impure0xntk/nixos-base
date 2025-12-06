@@ -38,7 +38,7 @@ in {
             N8N_PROTOCOL = "http";
             N8N_RUNNERS_ENABLED = "true";
             NODE_FUNCTION_ALLOW_EXTERNAL = "true";
-            WEBHOOK_URL = "${N8N_PROTOCOL}://${N8N_HOST}";
+            WEBHOOK_URL = "${N8N_PROTOCOL}://${N8N_HOST}:${N8N_PORT}";
             NODE_ENV = "production";
           };
         };
