@@ -105,7 +105,7 @@ in {
               dns = 53;
               # http = 4000;
               # https = 8443; # to avoid conflict with reverse-proxy
-              # tls = 853;
+              tls = 853;
             };
             upstreams = {
               strategy = "strict";
