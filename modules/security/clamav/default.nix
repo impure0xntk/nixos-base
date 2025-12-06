@@ -178,6 +178,12 @@ in
       Restart = "on-failure";
     };
 
+    systemd.sockets.clamav-daemon.listenStreams = lib.mkIf cfg.remote.server.enable (lib.mkForce [
+      config.services.clamav.daemon.settings.LocalSocket
+      (toString cfg.remote.server.port)
+    ]);
+
+
     # Official config cannot set only clamdscan.
     systemd.timers.clamdscan = lib.mkIf config.services.clamav.scanner.enable {
       description = "Timer for ClamAV virus scanner";
