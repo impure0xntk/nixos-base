@@ -15,6 +15,12 @@
       };
     }
   ];
+  "deepseek-v3.1-nex-n1" = [
+    {
+      model = "openrouter/nex-agi/deepseek-v3.1-nex-n1:free";
+      params = {};
+    }
+  ];
   text-to-speech-playai-tts = [
     {
       model = "groq/playai-tts";
