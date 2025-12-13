@@ -29,33 +29,19 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    boot.enableContainers = true;
-    containers.bookmark = {
-      autoStart = true;
-
-      config = {config, lib, ...}: {
-        imports = [ ../core/minimal.nix ];
-        system.stateVersion = config.system.nixos.release;
-
-        services.journald.extraConfig = ''
-          SystemMaxUse=100M
-        '';
-
-        services.karakeep = {
-          enable = true;
-          package = pkgs.pure-unstable.karakeep;
-          browser.exe = lib.getExe pkgs.pure-unstable.ungoogled-chromium;
-          extraEnvironment = rec {
-            PORT = toString cfg.port;
-            # DISABLE_SIGNUPS = "true";
-            DISABLE_NEW_RELEASE_CHECK = "true";
-            OPENAI_API_KEY = "dummy";
-            OPENAI_BASE_URL = cfg.inference.url;
-            INFERENCE_TEXT_MODEL = cfg.inference.textModel;
-            INFERENCE_IMAGE_MODEL = INFERENCE_TEXT_MODEL;
-            EMBEDDING_TEXT_MODEL = INFERENCE_TEXT_MODEL;
-          };
-        };
+    services.karakeep = {
+      enable = true;
+      package = pkgs.pure-unstable.karakeep;
+      browser.exe = lib.getExe pkgs.pure-unstable.ungoogled-chromium;
+      extraEnvironment = rec {
+        PORT = toString cfg.port;
+        # DISABLE_SIGNUPS = "true";
+        DISABLE_NEW_RELEASE_CHECK = "true";
+        OPENAI_API_KEY = "dummy";
+        OPENAI_BASE_URL = cfg.inference.url;
+        INFERENCE_TEXT_MODEL = cfg.inference.textModel;
+        INFERENCE_IMAGE_MODEL = INFERENCE_TEXT_MODEL;
+        EMBEDDING_TEXT_MODEL = INFERENCE_TEXT_MODEL;
       };
     };
   };
