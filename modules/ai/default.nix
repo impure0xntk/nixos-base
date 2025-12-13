@@ -144,53 +144,26 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    boot.enableContainers = true;
+    # Litellm needs host environment: some models such as Github Copilot needs auth by hand
+    services.litellm = {
+      enable = true;
+      package = pkgs.pure-unstable.litellm;
+      settings = settingsAll;
+      host = cfg.proxy.host;
+      port = cfg.proxy.port;
+      environmentFile = cfg.proxy.environmentFilePath;
 
-    containers.ai-proxy = lib.mkIf cfg.proxy.enable {
-      autoStart = true;
+      environment = {
+        ANONYMIZED_TELEMETRY = "False";
+        DO_NOT_TRACK = "True";
+        SCARF_NO_ANALYTICS = "True";
+        DISABLE_ADMIN_UI = "True";
+        NO_DOCS = "True";
+      } // (lib.optionalAttrs (cfgProxy != "") {
+        HTTPS_PROXY = cfgProxy;
+      });
 
-      bindMounts."/run/credentials/litellm.service/env" = lib.mkIf (cfg.proxy.environmentFilePath != null) {
-        hostPath = cfg.proxy.environmentFilePath;
-        isReadOnly = true;
-      };
-
-      config =
-        {
-          config,
-          lib,
-          ...
-        }:
-        {
-          imports = [ ../core/minimal.nix ];
-          system.stateVersion = config.system.nixos.release;
-
-          services.journald.extraConfig = ''
-            SystemMaxUse=100M
-          '';
-
-          services.litellm = {
-            enable = true;
-            package = pkgs.pure-unstable.litellm;
-            settings = settingsAll;
-            host = cfg.proxy.host;
-            port = cfg.proxy.port;
-            environmentFile = if (cfg.proxy.environmentFilePath == null)
-              then null else "/run/credentials/litellm.service/env";
-
-            environment = {
-              ANONYMIZED_TELEMETRY = "False";
-              DO_NOT_TRACK = "True";
-              SCARF_NO_ANALYTICS = "True";
-              DISABLE_ADMIN_UI = "True";
-              NO_DOCS = "True";
-            } // (lib.optionalAttrs (cfgProxy != "") {
-              HTTPS_PROXY = cfgProxy;
-            });
-
-          };
-        };
     };
-
     containers.ai-chat = lib.mkIf cfg.chat.enable {
       autoStart = true;
 
