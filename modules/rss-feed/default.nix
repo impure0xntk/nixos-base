@@ -23,33 +23,13 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    boot.enableContainers = true;
-    containers.rss-feed = {
-      autoStart = true;
-
-      bindMounts."/run/credentials/miniflux.service/env" = lib.mkIf (cfg.adminCredentialsFile != null) {
-        hostPath = cfg.adminCredentialsFile;
-        isReadOnly = true;
-      };
-
-      config = {config, pkgs, lib, ...}: {
-        imports = [ ../core/minimal.nix ];
-        system.stateVersion = config.system.nixos.release;
-
-        services.journald.extraConfig = ''
-          SystemMaxUse=100M
-        '';
-
-        services.miniflux = {
-          enable = true;
-          package = miniflux;
-          createDatabaseLocally = true;
-          adminCredentialsFile = if (cfg.adminCredentialsFile == null)
-            then null else "/run/credentials/miniflux.service/env";
-          config = {
-            LISTEN_ADDR = "${cfg.host}:${toString cfg.port}";
-          };
-        };
+    services.miniflux = {
+      enable = true;
+      package = miniflux;
+      createDatabaseLocally = true;
+      adminCredentialsFile = cfg.adminCredentialsFile;
+      config = {
+        LISTEN_ADDR = "${cfg.host}:${toString cfg.port}";
       };
     };
   };
