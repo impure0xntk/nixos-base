@@ -14,7 +14,13 @@ in {
       description = "Port for bookmark server.";
       default = 15050;
     };
+    extraEnvironment = lib.mkOption {
+      type = lib.types.attrs;
+      description = "extraEnvironment";
+      default = {};
+    };
     inference = {
+      enable = lib.mkEnableOption "Whether to enable bookmark inference.";
       url = lib.mkOption {
         type = lib.types.str;
         description = "URL of OPENAI API Endpoint for inference";
@@ -33,16 +39,17 @@ in {
       enable = true;
       package = pkgs.pure-unstable.karakeep;
       browser.exe = lib.getExe pkgs.pure-unstable.ungoogled-chromium;
-      extraEnvironment = rec {
+      extraEnvironment = {
         PORT = toString cfg.port;
         # DISABLE_SIGNUPS = "true";
         DISABLE_NEW_RELEASE_CHECK = "true";
-        OPENAI_API_KEY = "dummy";
+      } // (lib.optionalAttrs cfg.inference.enable rec {
+        OPENAI_API_KEY= "dummy";
         OPENAI_BASE_URL = cfg.inference.url;
         INFERENCE_TEXT_MODEL = cfg.inference.textModel;
         INFERENCE_IMAGE_MODEL = INFERENCE_TEXT_MODEL;
         EMBEDDING_TEXT_MODEL = INFERENCE_TEXT_MODEL;
-      };
+      }) // cfg.extraEnvironment;
     };
   };
 }
