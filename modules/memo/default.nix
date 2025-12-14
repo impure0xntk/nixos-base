@@ -22,89 +22,75 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    boot.enableContainers = true;
-
-    containers.memo = {
-      autoStart = true;
-      config = { config, ... }: {
-        imports = [ ../core/minimal.nix ];
-        system.stateVersion = config.system.nixos.release;
-
-        services.journald.extraConfig = ''
-          SystemMaxUse=100M
+    systemd.services.memos = {
+      wantedBy = [ "multi-user.target" ];
+      after = [ "network.target" ];
+      wants = [ "network.target" ];
+      description = "Memos, a privacy-first, lightweight note-taking solution";
+      serviceConfig = {
+        Type = "simple";
+        RestartSec = 60;
+        LimitNOFILE = 65536;
+        NoNewPrivileges = true;
+        LockPersonality = true;
+        RemoveIPC = true;
+        ReadWritePaths = [
+          cfg.dataDir
+        ];
+        DynamicUser = true;
+        ProtectSystem = "strict";
+        PrivateUsers = true;
+        ProtectHome = true;
+        PrivateTmp = true;
+        PrivateDevices = true;
+        ProtectHostname = true;
+        ProtectClock = true;
+        UMask = "0077";
+        ProtectKernelTunables = true;
+        ProtectKernelModules = true;
+        ProtectControlGroups = true;
+        ProtectProc = "invisible";
+        RuntimeDirectory = "memos";
+        StateDirectory = "memos";
+        SystemCallFilter = [
+          " " # This is needed to clear the SystemCallFilter existing definitions
+          "~@reboot"
+          "~@swap"
+          "~@obsolete"
+          "~@mount"
+          "~@module"
+          "~@debug"
+          "~@cpu-emulation"
+          "~@clock"
+          "~@raw-io"
+          "~@privileged"
+          "~@resources"
+        ];
+        CapabilityBoundingSet = [
+          " " # Reset all capabilities to an empty set
+        ];
+        RestrictAddressFamilies = [
+          " " # This is needed to clear the RestrictAddressFamilies existing definitions
+          "none" # Remove all addresses families
+          "AF_UNIX"
+          "AF_INET"
+          "AF_INET6"
+        ];
+        DevicePolicy = "closed";
+        ProtectKernelLogs = true;
+        SystemCallArchitectures = "native";
+        RestrictNamespaces = true;
+        RestrictRealtime = true;
+        RestrictSUIDSGID = true;
+        ExecStart = lib.getExe pkgs.memos;
+        EnvironmentFile = pkgs.writeText "memos-envfile" ''
+          MEMOS_MODE=prod
+          MEMOS_ADDR=${cfg.host}
+          MEMOS_PORT=${toString cfg.port}
+          MEMOS_DATA=${cfg.dataDir}
+          MEMOS_DRIVER=sqlite
+          MEMOS_INSTANCE_URL=http://${cfg.host}:${toString cfg.port}
         '';
-
-        systemd.services.memos = {
-          wantedBy = [ "multi-user.target" ];
-          after = [ "network.target" ];
-          wants = [ "network.target" ];
-          description = "Memos, a privacy-first, lightweight note-taking solution";
-          serviceConfig = {
-            Type = "simple";
-            RestartSec = 60;
-            LimitNOFILE = 65536;
-            NoNewPrivileges = true;
-            LockPersonality = true;
-            RemoveIPC = true;
-            ReadWritePaths = [
-              cfg.dataDir
-            ];
-            DynamicUser = true;
-            ProtectSystem = "strict";
-            PrivateUsers = true;
-            ProtectHome = true;
-            PrivateTmp = true;
-            PrivateDevices = true;
-            ProtectHostname = true;
-            ProtectClock = true;
-            UMask = "0077";
-            ProtectKernelTunables = true;
-            ProtectKernelModules = true;
-            ProtectControlGroups = true;
-            ProtectProc = "invisible";
-            RuntimeDirectory = "memos";
-            StateDirectory = "memos";
-            SystemCallFilter = [
-              " " # This is needed to clear the SystemCallFilter existing definitions
-              "~@reboot"
-              "~@swap"
-              "~@obsolete"
-              "~@mount"
-              "~@module"
-              "~@debug"
-              "~@cpu-emulation"
-              "~@clock"
-              "~@raw-io"
-              "~@privileged"
-              "~@resources"
-            ];
-            CapabilityBoundingSet = [
-              " " # Reset all capabilities to an empty set
-            ];
-            RestrictAddressFamilies = [
-              " " # This is needed to clear the RestrictAddressFamilies existing definitions
-              "none" # Remove all addresses families
-              "AF_UNIX"
-              "AF_INET"
-              "AF_INET6"
-            ];
-            DevicePolicy = "closed";
-            ProtectKernelLogs = true;
-            SystemCallArchitectures = "native";
-            RestrictNamespaces = true;
-            RestrictRealtime = true;
-            RestrictSUIDSGID = true;
-            ExecStart = lib.getExe pkgs.memos;
-            EnvironmentFile = pkgs.writeText "memos-envfile" ''
-              MEMOS_MODE=prod
-              MEMOS_ADDR=${cfg.host}
-              MEMOS_PORT=${toString cfg.port}
-              MEMOS_DATA=${cfg.dataDir}
-              MEMOS_DRIVER=sqlite
-              MEMOS_INSTANCE_URL=http://${cfg.host}:${toString cfg.port}
-            '';
-          };
-        };
       };
     };
   };

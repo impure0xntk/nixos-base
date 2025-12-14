@@ -6,7 +6,7 @@
 #  - install each editors plugins.
 #    vscode: WakaTime(WakaTime.vscode-wakatime)
 #    chrome: WakaTime(jnbbnacmeggbgdjgaoojpmhdlkkpblgi)
-{ config, lib, ... }:
+{ config, pkgs, lib, ... }:
 let
   cfg = config.my.system.worklog;
 in {
@@ -25,43 +25,29 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    boot.enableContainers = true;
-    containers.wakapi = {
-      autoStart = true;
-
-      config = {config, pkgs, lib, ...}: {
-        imports = [ ../core/minimal.nix ];
-        system.stateVersion = config.system.nixos.release;
-
-        services.journald.extraConfig = ''
-          SystemMaxUse=100M
-        '';
-
-        services.wakapi = {
-          enable = true;
-          package = pkgs.wakapi;
-          database = {
-            dialect = "sqlite3";
-            createLocally = lib.mkForce false;
-          };
-          passwordSalt = "WGgYPNa4B4sfgJK3p61TYgWkx44rjTUY"; # wakapi github sample. This is insecure
-          settings = {
-            server = {
-              listen_ipv4 = cfg.host;
-              port = cfg.port;
-            };
-            security = {
-              invite_codes = false;
-              disable_frontpage = true;
-            };
-            mail.enable = false;
-          };
+    services.wakapi = {
+      enable = true;
+      package = pkgs.wakapi;
+      database = {
+        dialect = "sqlite3";
+        createLocally = lib.mkForce false;
+      };
+      passwordSalt = "WGgYPNa4B4sfgJK3p61TYgWkx44rjTUY"; # wakapi github sample. This is insecure
+      settings = {
+        server = {
+          listen_ipv4 = cfg.host;
+          port = cfg.port;
         };
-        # Workaround: https://github.com/muety/wakapi/issues/731
-        # https://github.com/NotAShelf/nixpkgs/commit/3204e04a80ed61481315c1c0cdddfcdde116ed85
-        systemd.services.wakapi.serviceConfig.WorkingDirectory = "/var/lib/wakapi";
-        systemd.services.wakapi.serviceConfig.RuntimeDirectory = "wakapi";
+        security = {
+          invite_codes = false;
+          disable_frontpage = true;
+        };
+        mail.enable = false;
       };
     };
+    # Workaround: https://github.com/muety/wakapi/issues/731
+    # https://github.com/NotAShelf/nixpkgs/commit/3204e04a80ed61481315c1c0cdddfcdde116ed85
+    systemd.services.wakapi.serviceConfig.WorkingDirectory = "/var/lib/wakapi";
+    systemd.services.wakapi.serviceConfig.RuntimeDirectory = "wakapi";
   };
 }

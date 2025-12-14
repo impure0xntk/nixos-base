@@ -17,39 +17,25 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    boot.enableContainers = true;
-    containers.searxng = {
-      autoStart = true;
-
-      config = {config, pkgs, lib, ...}: {
-        imports = [ ../core/minimal.nix ];
-        system.stateVersion = config.system.nixos.release;
-
-        services.journald.extraConfig = ''
-          SystemMaxUse=100M
-        '';
-
-        services.searx = {
-          enable = true;
-          settings = {
-            general = {
-              debug = false;
-              donation_url = false;
-              contact_url = false;
-              privacypolicy_url = false;
-              enable_metrics = false;
-            };
-            search = {
-              formats = [
-                "json"
-              ];
-            };
-            server = {
-              bind_address = cfg.host; # Perhaps must be set except localhost
-              port = cfg.port;
-              secret_key = "dummy";
-            };
-          };
+    services.searx = {
+      enable = true;
+      settings = {
+        general = {
+          debug = false;
+          donation_url = false;
+          contact_url = false;
+          privacypolicy_url = false;
+          enable_metrics = false;
+        };
+        search = {
+          formats = [
+            "json"
+          ];
+        };
+        server = {
+          bind_address = cfg.host; # Perhaps must be set except localhost
+          port = cfg.port;
+          secret_key = "dummy";
         };
       };
     };
