@@ -8,13 +8,6 @@
       };
     }
   ];
-  "nova-2-lite" = [
-    {
-      model = "openrouter/amazon/nova-2-lite-v1:free";
-      params = {
-      };
-    }
-  ];
   "deepseek-v3.1-nex-n1" = [
     {
       model = "openrouter/nex-agi/deepseek-v3.1-nex-n1:free";
