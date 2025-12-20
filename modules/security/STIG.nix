@@ -4,7 +4,8 @@
 # NOTE: audit/auditd does not work on WSL becaulse "ConditionVirtualization" in systemd service file.
 { config, pkgs, lib, ... }:
 let
-  useAudit = !(config.my.system.platform.type == "wsl");
+  useAudit = !(config.my.system.platform.type == "wsl"
+    || config.my.system.platform.type == "nspawn");
   useSshd = config.services.openssh.enable;
   # For V-268082, V-268083
   # Based on US Government Standard Mandatory DOD Notice and Consent.

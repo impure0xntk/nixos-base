@@ -4,6 +4,7 @@ let
   # use "https_proxy= all_proxy= sudo -E nixos-rebuild switch --flake ".?submodules=1" --impure --show-trace"
   # to rebuild to disable proxy, and restart system.
   cfg = config.my.system.networks;
+  isVirtualEnv = config.virtualisation.docker.enable || config.boot.isNspawnContainer;
 in {
   options.my.system.networks = {
     hostname = lib.mkOption {
@@ -24,7 +25,7 @@ in {
       hostName = cfg.hostname;
       firewall.enable = lib.mkDefault true; # for nixos-generators setting conflict workaround, added lib.mkDefault.
       # Disable because service is failed: https://discourse.nixos.org/t/nftables-could-not-process-rule-no-such-file-or-directory/33031
-      nftables.enable = lib.mkDefault (! config.virtualisation.docker.enable); # docker does not support nftables.
+      nftables.enable = lib.mkDefault (! isVirtualEnv); # docker does not support nftables.
 
       # Ensure declarative networking, but need to be enabled for runtime.
       # E.g. must be enabled for virtualbox.

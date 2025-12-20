@@ -92,6 +92,11 @@
               {
                 imports = [ ./platform/native-linux ];
               };
+            nspawn =
+              { ... }:
+              {
+                imports = [ ./platform/nspawn ];
+              };
             virtualbox-guest =
               { ... }:
               {
