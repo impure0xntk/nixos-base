@@ -20,6 +20,12 @@
       params = {};
     }
   ];
+  "mimo-v2-flash" = [
+    {
+      model = "openrouter/xiaomi/mimo-v2-flash:free";
+      params = {};
+    }
+  ];
   text-to-speech-playai-tts = [
     {
       model = "groq/playai-tts";
