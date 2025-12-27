@@ -1,9 +1,9 @@
 { config, pkgs, lib, ... }:
 let
-  cfg = config.my.system.documentation;
+  cfg = config.my.system.lint;
 in {
-  options.my.system.documentation = {
-    enable = lib.mkEnableOption "Whether to enable documentation.";
+  options.my.system.lint = {
+    enable = lib.mkEnableOption "Whether to enable lint.";
     port = lib.mkOption {
       type = lib.types.port;
       description = "Port for LanguageTool server.";
