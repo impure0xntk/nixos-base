@@ -1,5 +1,4 @@
 # Inspire: https://github.com/colemickens/nixcfg/blob/da7474d9d42f5714a1064260154cfd6e97dfcba7/mixins/clamav.nix
-# TODO: notify after detected infected file.
 {
   config,
   pkgs,
@@ -21,7 +20,7 @@ let
   # On-access scan is currently(2025/6) unstable about the following settings:
   # * exclude directory: https://github.com/Cisco-Talos/clamav/issues/1412
   enableOnacc = false;
-  
+
   genUserVscodeExcludes = import ./excludes/vscode.nix;
 
   normalUsers = attrsets.filterAttrs (_: config: config.isNormalUser) config.users.users;
@@ -40,6 +39,7 @@ let
         [
           "${dir}/.vscode/extensions"
           "${dir}/.vscode-server/extensions"
+          "${dir}/.ssh/agent" # To suppress false positive
         ])
     ) userDirectories;
   };
@@ -219,9 +219,14 @@ in
               RETURN_CODE=$?
               cat "$TMPFILE" >&2
               if test $RETURN_CODE -ne 0 && test -s "$TMPFILE"; then
-                cat "$TMPFILE" | ${cfg.notification.commandGenerator}
+                if grep "Infected files: 0" "$TMPFILE" >/dev/null; then
+                  echo "Scan completed with no infections." >&2
+                else
+                  echo "Scan completed with infections. Sending notification..." >&2
+                  cat "$TMPFILE" | ${cfg.notification.commandGenerator}
+                fi
               else
-                echo "No output found."
+                echo "No output found." >&2
               fi
             '' else scanCommand "";
         in pkgs.writeShellScript "scan" scanAndNotifyCommand;
