@@ -41,7 +41,9 @@ in
           53 # DNS port for VPN use
         ]; # VPN port
 
-        interfaces.wg0.allowedTCPPorts = cfg.vpn.allowedTCPPorts;
+        interfaces.wg0.allowedTCPPorts = cfg.vpn.allowedTCPPorts or [] ++ [
+          53 # DNS port for VPN use
+        ];
       };
 
       wireguard = {
