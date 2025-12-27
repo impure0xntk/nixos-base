@@ -29,6 +29,8 @@ let
       "/var/lib"
       "/etc"
       "/var/tmp"
+
+      "/nix/store"
     ];
     systemExcludeDirectories = [
       quarantineDirectory
