@@ -1,6 +1,8 @@
 { config, pkgs, lib, ... }:
 let
   cfg = config.my.system.memo;
+
+  memos = pkgs.pure-unstable.memos;
 in {
   options.my.system.memo = {
     enable = lib.mkEnableOption "Whether to enable memo (Memos server).";
