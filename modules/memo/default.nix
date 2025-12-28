@@ -82,7 +82,7 @@ in {
         RestrictNamespaces = true;
         RestrictRealtime = true;
         RestrictSUIDSGID = true;
-        ExecStart = lib.getExe pkgs.memos;
+        ExecStart = lib.getExe memos;
         EnvironmentFile = pkgs.writeText "memos-envfile" ''
           MEMOS_MODE=prod
           MEMOS_ADDR=${cfg.host}
