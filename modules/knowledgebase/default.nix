@@ -14,6 +14,11 @@ in {
       description = "Port for knowledgebase server.";
       default = 8000;
     };
+    settings = lib.mkOption {
+      type = lib.types.attrs;
+      description = "Settings for knowledgebase server.";
+      default = {};
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -26,6 +31,6 @@ in {
       storage = {
         storageType = "local";
       };
-    };
+    } // cfg.settings;
   };
 }
