@@ -15,11 +15,6 @@ in {
       description = "Port for rss-feed server.";
       default = 16060;
     };
-    adminCredentialsFile = lib.mkOption {
-      type = lib.types.path;
-      description = "Admin Credential File path.";
-      default = "";
-    };
     settings = lib.mkOption {
       type = lib.types.attrs;
       description = "Additional settings for rss-feed.";
@@ -31,9 +26,8 @@ in {
     services.miniflux = {
       enable = true;
       package = miniflux;
-      createDatabaseLocally = true;
-      adminCredentialsFile = cfg.adminCredentialsFile;
       config = {
+        CREATE_ADMIN = lib.mkDefault false;
         LISTEN_ADDR = "${cfg.host}:${toString cfg.port}";
       } // cfg.settings;
     };
