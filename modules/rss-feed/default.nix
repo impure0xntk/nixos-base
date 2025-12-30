@@ -20,6 +20,11 @@ in {
       description = "Admin Credential File path.";
       default = "";
     };
+    settings = lib.mkOption {
+      type = lib.types.attrs;
+      description = "Additional settings for rss-feed.";
+      default = { };
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -30,7 +35,7 @@ in {
       adminCredentialsFile = cfg.adminCredentialsFile;
       config = {
         LISTEN_ADDR = "${cfg.host}:${toString cfg.port}";
-      };
+      } // cfg.settings;
     };
   };
 }
