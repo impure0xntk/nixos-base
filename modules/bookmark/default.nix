@@ -32,6 +32,11 @@ in {
         default = "not found";
       };
     };
+    settings = lib.mkOption {
+      type = lib.types.attrs;
+      description = "Additional settings for bookmark.";
+      default = { };
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -50,6 +55,6 @@ in {
         INFERENCE_IMAGE_MODEL = INFERENCE_TEXT_MODEL;
         EMBEDDING_TEXT_MODEL = INFERENCE_TEXT_MODEL;
       }) // cfg.extraEnvironment;
-    };
+    } // cfg.settings;
   };
 }
