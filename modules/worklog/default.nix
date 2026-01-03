@@ -19,8 +19,22 @@ in {
     };
     host = lib.mkOption {
       type = lib.types.str;
-      description = "Host for worklog sever. Do not change.";
+      description = "Host for worklog sever.";
       default = "localhost";
+    };
+    publicUrl = lib.mkOption {
+      type = lib.types.str;
+      description = "Public URL for worklog sever.";
+      default = "http://${cfg.host}:${toString cfg.port}";
+    };
+    settings = lib.mkOption {
+      type = lib.types.attrs;
+      description = "Settings for worklog";
+      default = {};
+    };
+    environmentFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
     };
   };
 
@@ -37,17 +51,20 @@ in {
         server = {
           listen_ipv4 = cfg.host;
           port = cfg.port;
+          public_url = cfg.publicUrl;
         };
         security = {
           invite_codes = false;
           disable_frontpage = true;
         };
         mail.enable = false;
-      };
+      } // cfg.settings;
     };
     # Workaround: https://github.com/muety/wakapi/issues/731
     # https://github.com/NotAShelf/nixpkgs/commit/3204e04a80ed61481315c1c0cdddfcdde116ed85
     systemd.services.wakapi.serviceConfig.WorkingDirectory = "/var/lib/wakapi";
     systemd.services.wakapi.serviceConfig.RuntimeDirectory = "wakapi";
+
+    systemd.services.wakapi.serviceConfig.EnvironmentFile = cfg.environmentFile;
   };
 }
