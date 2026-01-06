@@ -159,6 +159,9 @@ in
         SCARF_NO_ANALYTICS = "True";
         DISABLE_ADMIN_UI = "True";
         NO_DOCS = "True";
+
+        # For GitHub Copilot
+        GITHUB_COPILOT_TOKEN_DIR = "${config.services.litellm.stateDir}/github_copilot";
       } // (lib.optionalAttrs (cfgProxy != "") {
         HTTPS_PROXY = cfgProxy;
       });
