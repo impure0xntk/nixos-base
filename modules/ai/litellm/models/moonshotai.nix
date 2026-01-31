@@ -21,4 +21,14 @@ in
       };
     }
   ];
+  "kimi-k2.5" = [
+    {
+      model = "openai/kimi-k2.5-free";
+      params = {
+        api_base = "https://opencode.ai/zen/v1";
+        api_key = "os.environ/OPENCODE_ZEN_API_KEY";
+      };
+    }
+  ];
+
 }
