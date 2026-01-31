@@ -51,20 +51,6 @@ in
       } // githubCopilotDummySettings;
     }
   ];
-  gpt-4o = [
-    {
-      model = "github_copilot/gpt-4o";
-      params = {
-      } // githubCopilotDummySettings;
-    }
-  ];
-  o3 = [
-    {
-      model = "github_copilot/o3";
-      params = {
-      } // githubCopilotDummySettings;
-    }
-  ];
   speech-to-text-whisper-large-v3 = [
     {
       model = "groq/whisper-large-v3";
