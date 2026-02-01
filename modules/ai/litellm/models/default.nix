@@ -18,6 +18,11 @@ let
     lib.flatten (
       lib.mapAttrsToList (name: defs: lib.map (def: toLitellmEntry name def) defs) modelAttrs
     );
+
+  opencodeZenParams = {
+    api_base = "https://opencode.ai/zen/v1";
+    api_key = "os.environ/OPENCODE_ZEN_API_KEY";
+  };
 in
 modelsFinal (
   (import ./claude.nix { inherit lib; })
@@ -25,11 +30,11 @@ modelsFinal (
   // (import ./google.nix { inherit lib; })
   // (import ./meta.nix { inherit lib; })
   // (import ./mistralai.nix { inherit lib; })
-  // (import ./moonshotai.nix { inherit lib; })
+  // (import ./moonshotai.nix { inherit lib opencodeZenParams; })
   // (import ./qwen.nix { inherit lib; })
   // (import ./openai.nix { inherit lib; })
   // (import ./x.nix { inherit lib; })
-  // (import ./others.nix { inherit lib; }) // { })
+  // (import ./others.nix { inherit lib opencodeZenParams; }) // { })
 
 #   modelsRaw = {
 #     qwen3 = [

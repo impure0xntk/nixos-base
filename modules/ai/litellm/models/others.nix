@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, opencodeZenParams, ... }:
 
 {
   "glm-4.5-air" = [
@@ -11,10 +11,7 @@
   "glm-4.7" = [
     {
       model = "openai/glm-4.7-free";
-      params = {
-        api_base = "https://opencode.ai/zen/v1";
-        api_key = "os.environ/OPENCODE_ZEN_API_KEY";
-      };
+      params = opencodeZenParams;
     }
   ];
   "nemotoron-3-nano" = [
