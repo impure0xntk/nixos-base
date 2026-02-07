@@ -1,7 +1,7 @@
 {
   inputs = {
-    nixos.url = "github:nixos/nixpkgs/nixos-25.05";
-    nixpkgs.url = "github:nixos/nixpkgs/release-25.05";
+    nixos.url = "github:Nixos/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:Nixos/nixpkgs/release-25.05";
     flake-utils.url = "github:numtide/flake-utils";
     lix = {
       url = "https://git.lix.systems/lix-project/lix/archive/main.tar.gz";
@@ -29,6 +29,10 @@
     };
     sops-nix = {
       url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    arion = {
+      url = "github:hercules-ci/arion";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-lib = {
@@ -81,6 +85,7 @@
                 lix-module.nixosModules.default # Use lix instead of nix
                 nixos-wsl.nixosModules.default
                 nix-index-database.nixosModules.nix-index
+                arion.nixosModules.arion
                 home-manager.nixosModules.home-manager
                 sops-nix.nixosModules.sops
               ]
