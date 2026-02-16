@@ -2,6 +2,7 @@
   inputs = {
     nixos.url = "github:Nixos/nixpkgs/nixos-25.05";
     nixpkgs.url = "github:Nixos/nixpkgs/release-25.05";
+    nixpkgs-unstable.url = "github:Nixos/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     lix = {
       url = "https://git.lix.systems/lix-project/lix/archive/main.tar.gz";
@@ -39,6 +40,7 @@
       url = "github:impure0xntk/nix-lib";
       inputs = {
         nixpkgs.follows = "nixpkgs";
+        nixpkgs-unstable.follows = "nixpkgs-unstable";
         flake-utils.follows = "flake-utils";
       };
     };
