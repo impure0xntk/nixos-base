@@ -159,6 +159,7 @@ in
 
     ./minimal.nix
     ./memory-management.nix
+    ./ntp.nix
   ];
   disabledModules = [
     (modulesPath + "/profiles/all-hardware.nix")

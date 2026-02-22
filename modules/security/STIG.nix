@@ -284,13 +284,9 @@ in
 
     # V-268148: is the above audit
 
-    # V-268149: (timeserver) skip
-    # V-268150
-    services.timesyncd.extraConfig = ''
-      PollIntervalMaxSec=60
-    '';
-    # V-268151
-    services.timesyncd.enable = true;
+    # V-268149(sync stratum 1 time source),
+    # V-268150(sync time source with high resolution),
+    # V-268151(enable chronyd for time synchronization) are defined at core/ntp.nix
 
     # V-268152
     # nix.settings.allowed-users = [ "root" "@wheel" ];
