@@ -37,16 +37,16 @@ in
       } // gptOssParams;
     }
   ];
-  "gpt-5.1" = [
+  "gpt-5.2" = [
     {
-      model = "github_copilot/gpt-5.1";
+      model = "github_copilot/gpt-5.2";
       params = {
       } // githubCopilotDummySettings;
     }
   ];
-  "gpt-5.1-codex" = [
+  "gpt-5.2-codex" = [
     {
-      model = "github_copilot/gpt-5.1-codex";
+      model = "github_copilot/gpt-5.2-codex";
       params = {
       } // githubCopilotDummySettings;
     }
