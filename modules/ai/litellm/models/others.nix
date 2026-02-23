@@ -8,10 +8,16 @@
       };
     }
   ];
-  "glm-4.7" = [
+  "glm-5" = [
     {
-      model = "openai/glm-4.7-free";
+      model = "openai/glm-5-free";
       params = opencodeZenParams;
+    }
+  ];
+  "step-3.5-flash" = [
+    {
+      model = "openrouter/stepfun/step-3.5-flash:free";
+      params = {};
     }
   ];
   "nemotoron-3-nano" = [
