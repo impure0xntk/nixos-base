@@ -3,14 +3,8 @@
 #    Use "systemctl cat --user litellm.service" ans exec ExecStart command from interactive commandline.
 # 2. You can start litellm automatically.
 # For details, see https://docs.litellm.ai/docs/providers/github_copilot
-{ lib, ... }:
+{ lib, githubCopilotParams, openaiParams, ... }:
 let
-  githubCopilotDummySettings = {
-    extra_headers = {
-      "Editor-Version" = "vscode/1.103.2";
-      "Copilot-Integration-Id" = "vscode-chat";
-    };
-  };
   gptOssParams = {
     temperature = 0.6;
     top_p = 1.0;
@@ -40,15 +34,27 @@ in
   "gpt-5.2" = [
     {
       model = "github_copilot/gpt-5.2";
+      info.mode = "responses";
       params = {
-      } // githubCopilotDummySettings;
+      } // githubCopilotParams;
+    }
+    {
+      model = "openai/gpt-5.2";
+      params = {
+      } // openaiParams;
     }
   ];
   "gpt-5.2-codex" = [
     {
       model = "github_copilot/gpt-5.2-codex";
+      info.mode = "responses";
       params = {
-      } // githubCopilotDummySettings;
+      } // githubCopilotParams;
+    }
+    {
+      model = "openai/gpt-5.2-codex";
+      params = {
+      } // openaiParams;
     }
   ];
   speech-to-text-whisper-large-v3 = [

@@ -3,28 +3,22 @@
 #    Use "systemctl cat --user litellm.service" ans exec ExecStart command from interactive commandline.
 # 2. You can start litellm automatically.
 # For details, see https://docs.litellm.ai/docs/providers/github_copilot
-{ lib, ... }:
+{ lib, githubCopilotParams, ... }:
 let
-  githubCopilotDummySettings = {
-    extra_headers = {
-      "Editor-Version" = "vscode/1.103.2";
-      "Copilot-Integration-Id" = "vscode-chat";
-    };
-  };
 in
 {
-  "claude-sonnet-3.5" = [
+  "claude-sonnet-4.5" = [
     {
-      model = "github_copilot/claude-3.5-sonnet";
+      model = "github_copilot/claude-4.5-sonnet";
       params = {
-      } // githubCopilotDummySettings;
+      } // githubCopilotParams;
     }
   ];
-  "claude-sonnet-4" = [
+  "claude-opus-4.5" = [
     {
-      model = "github_copilot/claude-sonnet-4";
+      model = "github_copilot/claude-opus-4.5";
       params = {
-      } // githubCopilotDummySettings;
+      } // githubCopilotParams;
     }
   ];
 }

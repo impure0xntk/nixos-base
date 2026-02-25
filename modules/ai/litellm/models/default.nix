@@ -10,7 +10,7 @@ let
     // cfg.params;
     model_info = {
       id = builtins.replaceStrings [ "/" ":" ] [ "-" "-" ] cfg.model;
-    };
+    } // (cfg.info or {});
   };
 
   modelsFinal =
@@ -23,16 +23,27 @@ let
     api_base = "https://opencode.ai/zen/v1";
     api_key = "os.environ/OPENCODE_ZEN_API_KEY";
   };
+  githubCopilotParams = {
+    extra_headers = {
+      "editor-version" = "vscode/1.103.2";
+      "editor-plugin-version" = "copilot/1.155.0";
+      "Copilot-Integration-Id" = "vscode-chat";
+      "user-agent" = "GithubCopilot/1.155.0";
+    };
+  };
+  openaiParams = {
+    api_key = "os.environ/OPENAI_API_KEY";
+  };
 in
 modelsFinal (
-  (import ./claude.nix { inherit lib; })
+  (import ./claude.nix { inherit lib githubCopilotParams; })
   // import ./deepseek.nix { inherit lib; }
   // (import ./google.nix { inherit lib; })
   // (import ./meta.nix { inherit lib; })
   // (import ./mistralai.nix { inherit lib; })
   // (import ./moonshotai.nix { inherit lib opencodeZenParams; })
   // (import ./qwen.nix { inherit lib; })
-  // (import ./openai.nix { inherit lib; })
+  // (import ./openai.nix { inherit lib githubCopilotParams openaiParams; })
   // (import ./x.nix { inherit lib; })
   // (import ./others.nix { inherit lib opencodeZenParams; }) // { })
 
