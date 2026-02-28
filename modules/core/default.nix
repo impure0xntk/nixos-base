@@ -40,7 +40,7 @@ in
       };
       daemonCPUSchedPolicy = "idle";
     };
-    programs.nh = lib.mkIf cfg.mutableSystem {
+    programs.nh = {
       # nix CLI helper
       enable = true;
       clean = {
