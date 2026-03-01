@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, pkgs, lib, ... }:
 let
   cfg = config.my.system.web-search;
 in {
@@ -19,6 +19,7 @@ in {
   config = lib.mkIf cfg.enable {
     services.searx = {
       enable = true;
+      package = pkgs.pure-unstable.searxng;
       settings = {
         general = {
           debug = false;
