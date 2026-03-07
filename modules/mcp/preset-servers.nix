@@ -6,20 +6,15 @@
 }:
 let
   purePkgs = pkgs.pure-unstable; # to avoid build ungoogled-chromium because it uses too much RAM
-in
-{
-  arxiv = {
-    command = lib.getExe pkgs.mcp-server-arxiv;
+
+  createDevtools = { package, env }:{
+    command = lib.getExe package;
     args = [ ];
+    env = env;
   };
-  devtools = {
-    command = lib.getExe pkgs.mcp-server-devtools;
-    args = [ ];
-    env = {
-      # TODO: refactor. now depends on local searxng instance.
-      SEARXNG_BASE_URL = lib.concatStringsSep "," [
-        "http://localhost:16060"
-      ];
+  devtoolsArgsMinimal = {
+    package = pkgs.mcp-server-devtools;
+    env =  {
       ENABLE_ADDITIONAL_TOOLS = lib.concatStringsSep "," [
         "memory"
         "sequential-thinking" # instead of think
@@ -27,17 +22,56 @@ in
         "security_override"
       ];
       DISABLED_FUNCTIONS = lib.concatStringsSep "," [
-        "aws_documentation"
-        "copilot-agent"
+        "calculator"
+        "find_long_files"
         "devtools_help"
-        "murican_to_english"
-        "q-developer-agent"
-        "shadcn"
-        "terraform_documentation"
         "think"
       ];
     };
   };
+  devtoolsArgsLocalWebSearch = {
+    package = pkgs.mcp-server-devtools;
+    env =  devtoolsArgsMinimal.env // {
+      # TODO: refactor to support the changing of these URLs without needing to override the whole package
+      SEARXNG_BASE_URL = lib.concatStringsSep "," [
+        "http://localhost:16060"
+      ];
+    };
+  };
+  devtoolsArgsAll = {
+    package = pkgs.mcp-server-devtools.withPackages [
+      # TODO: enable after NixOS 26.05
+      # # For docling override
+      # (purePkgs.python3Packages.toPythonApplication (purePkgs.python3Packages.docling.override { # for process_document tool
+      #   docling-parse = purePkgs.python3Packages.docling-parse.overrideAttrs (old: {
+      #     meta.broken = false; # TODO: remove after NixOS 26.05
+      #   });
+      # }))
+    ];
+    env =  {
+      # TODO: refactor to support the changing of these URLs without needing to override the whole package
+      SEARXNG_BASE_URL = lib.concatStringsSep "," [
+        "http://localhost:16060"
+      ];
+      ENABLE_ADDITIONAL_TOOLS = devtoolsArgsMinimal.env.ENABLE_ADDITIONAL_TOOLS + "," + (lib.concatStringsSep "," [
+        "github"
+        "pdf"
+        "excel"
+        # TODO: enable after NixOS 26.05
+        # "process_document"
+      ]);
+      DISABLED_FUNCTIONS = devtoolsArgsMinimal.env.DISABLED_FUNCTIONS;
+    };
+  };
+in
+{
+  arxiv = {
+    command = lib.getExe pkgs.mcp-server-arxiv;
+    args = [ ];
+  };
+  devtools-minimal = createDevtools devtoolsArgsMinimal;
+  devtools-local-web-search = createDevtools devtoolsArgsLocalWebSearch;
+  devtools-all = createDevtools devtoolsArgsAll;
   git = {
     command = lib.getExe pkgs.mcp-server-git;
     args = [ ];
@@ -52,7 +86,7 @@ in
   };
   playwright = {
     # Use ungoogled-chromium
-    command = lib.getExe pkgs.mcp-server-playwright;
+    command = lib.getExe purePkgs.playwright-mcp;
     args = [
       "--executable-path"
       "${lib.getExe purePkgs.ungoogled-chromium}"
@@ -63,7 +97,7 @@ in
     args = [ ];
   };
   markitdown = {
-    command = lib.getExe pkgs.mcp-server-markitdown;
+    command = lib.getExe purePkgs.markitdown-mcp;
     args = [ ];
   };
   ocr = {
