@@ -31,30 +31,20 @@ in
       } // gptOssParams;
     }
   ];
-  "gpt-5.2" = [
+  "gpt-5.4" = [
     {
-      model = "github_copilot/gpt-5.2";
+      model = "github_copilot/gpt-5.4";
       info.mode = "responses";
       params = {
       } // githubCopilotParams;
-    }
-    {
-      model = "openai/gpt-5.2";
-      params = {
-      } // openaiParams;
     }
   ];
-  "gpt-5.2-codex" = [
+  "gpt-5.4-codex" = [
     {
-      model = "github_copilot/gpt-5.2-codex";
+      model = "github_copilot/gpt-5.4-codex";
       info.mode = "responses";
       params = {
       } // githubCopilotParams;
-    }
-    {
-      model = "openai/gpt-5.2-codex";
-      params = {
-      } // openaiParams;
     }
   ];
   speech-to-text-whisper-large-v3 = [

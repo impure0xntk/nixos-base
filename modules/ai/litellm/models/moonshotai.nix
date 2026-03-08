@@ -21,11 +21,4 @@ in
       };
     }
   ];
-  "kimi-k2.5" = [
-    {
-      model = "openai/kimi-k2.5-free";
-      params = opencodeZenParams;
-    }
-  ];
-
 }

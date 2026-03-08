@@ -8,15 +8,15 @@
       };
     }
   ];
-  "glm-5" = [
-    {
-      model = "openai/glm-5-free";
-      params = opencodeZenParams;
-    }
-  ];
   "step-3.5-flash" = [
     {
       model = "openrouter/stepfun/step-3.5-flash:free";
+      params = {};
+    }
+  ];
+  "trinity-large-preview" = [
+    {
+      model = "openrouter/arcee-ai/trinity-large-preview:free";
       params = {};
     }
   ];
