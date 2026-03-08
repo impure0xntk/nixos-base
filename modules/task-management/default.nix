@@ -2,7 +2,7 @@
 let
   cfg = config.my.system.task-management;
 
-  package = pkgs.vikunja-unstable; # For 1.y.z
+  package = pkgs.pure-unstable.vikunja;
 in {
   options.my.system.task-management = {
     enable = lib.mkEnableOption "Whether to enable task-management.";
