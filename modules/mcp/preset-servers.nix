@@ -134,6 +134,9 @@ in
       "!! input your organization manually !!!"
     ];
   };
+  github = {
+    url = "https://api.githubcopilot.com/mcp/";
+  };
   spec-workflow = {
     command = lib.getExe pkgs.mcp-server-spec-workflow;
     args = [
