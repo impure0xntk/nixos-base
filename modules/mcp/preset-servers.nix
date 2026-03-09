@@ -56,9 +56,10 @@ let
       ENABLE_ADDITIONAL_TOOLS = devtoolsArgsMinimal.env.ENABLE_ADDITIONAL_TOOLS + "," + (lib.concatStringsSep "," [
         "github"
         "pdf"
-        "excel"
         # TODO: enable after NixOS 26.05
         # "process_document"
+        # TODO: check fixing of "Error: tool parameters array type must have items" in github copilot
+        # "excel"
       ]);
       DISABLED_FUNCTIONS = devtoolsArgsMinimal.env.DISABLED_FUNCTIONS;
     };
@@ -77,7 +78,7 @@ in
     args = [ ];
   };
   nixos = {
-    command = lib.getExe pkgs.mcp-server-nixos;
+    command = lib.getExe purePkgs.mcp-nixos;
     args = [ ];
   };
   excel = {
@@ -141,9 +142,9 @@ in
     ];
   };
   lsp = {
-    command = lib.getExe pkgs.mcp-server-lsp;
+    command = lib.getExe purePkgs.mcp-language-server;
     args = [
-      "!! input your organization manually !!!"
+      "!! input your project path manually !!!"
     ];
   };
   mysql = {
