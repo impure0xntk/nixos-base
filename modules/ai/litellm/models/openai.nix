@@ -31,15 +31,15 @@ in
       } // gptOssParams;
     }
   ];
-  "gpt-5.3" = [
+  "gpt-5.4" = [
     {
-      model = "github_copilot/gpt-5.3";
+      model = "github_copilot/gpt-5.4";
       info.mode = "responses";
       params = {
       } // githubCopilotParams;
     }
     {
-      model = "chatgpt/gpt-5.3";
+      model = "chatgpt/gpt-5.4";
       info.mode = "responses";
       params = {
       };
