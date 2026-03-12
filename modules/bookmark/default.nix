@@ -42,7 +42,8 @@ in {
   config = lib.mkIf cfg.enable {
     services.karakeep = {
       enable = true;
-      package = pkgs.pure-unstable.karakeep;
+      # package = pkgs.pure-unstable.karakeep; # TODO: check the result of 0.31.0 build: failed to build on aarch64-linux at 2026-03-12
+      package = pkgs.pure.karakeep;
       browser.exe = lib.getExe pkgs.pure-unstable.ungoogled-chromium;
       extraEnvironment = {
         PORT = toString cfg.port;
