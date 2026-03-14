@@ -26,6 +26,12 @@
       params = {};
     }
   ];
+  "nemotoron-3-super" = [
+    {
+      model = "openrouter/nvidia/nemotron-3-super-120b-a12b:free";
+      params = {};
+    }
+  ];
   text-to-speech-playai-tts = [
     {
       model = "groq/playai-tts";
