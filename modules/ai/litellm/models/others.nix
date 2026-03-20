@@ -32,6 +32,12 @@
       params = {};
     }
   ];
+  "minimax-m2.5" = [
+    {
+      model = "openai/minimax-m2.5-free";
+      params = opencodeZenParams;
+    }
+  ];
   text-to-speech-playai-tts = [
     {
       model = "groq/playai-tts";
