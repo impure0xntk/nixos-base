@@ -87,6 +87,10 @@ in
     };
   };
 
+  imports = [
+    ./local.nix
+  ];
+
   config = lib.mkIf cfg.enable {
     # Litellm needs host environment: some models such as Github Copilot needs auth by hand
     services.litellm = {
