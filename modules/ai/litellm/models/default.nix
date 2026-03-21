@@ -7,7 +7,7 @@ let
     litellm_params = {
       model = cfg.model;
     }
-    // cfg.params;
+    // cfg.params or {};
     model_info = {
       id = builtins.replaceStrings [ "/" ":" ] [ "-" "-" ] cfg.model;
     } // (cfg.info or {});

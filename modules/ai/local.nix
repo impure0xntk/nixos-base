@@ -8,7 +8,7 @@ in
     my.system.ai.local = {
       enable = lib.mkEnableOption "Whether to enable local service.";
       gpu = lib.mkOption {
-        type = lib.types.enum [ "none" "cuda" "rocm" ];
+        type = lib.types.enum [ "none" "cuda" "rocm" "vulkan" ];
         default = "none";
         description = "GPU support for local service.";
       };
@@ -28,7 +28,7 @@ in
         description = "List of model names to pull at startup.";
       };
       environmentVariables = lib.mkOption {
-        type = lib.types.attributeSetOf lib.types.str;
+        type = lib.types.attrs;
         default = { };
         description = "Environment variables to pass to the local service.";
       };
@@ -40,15 +40,15 @@ in
       enable = cfg.enable;
       package = if cfg.gpu == "cuda" then pkgs.pure-unstable.ollama-cuda
         else if cfg.gpu == "rocm" then pkgs.pure-unstable.ollama-rocm
+        else if cfg.gpu == "vulkan" then pkgs.pure-unstable.ollama-vulkan
         else pkgs.pure-unstable.ollama;
+      acceleration = if cfg.gpu == "none" then null else cfg.gpu;
       port = cfg.port;
       host = cfg.host;
       loadModels = cfg.loadModels;
       syncModels = true;
-      environmentVariables = lib.attrsets.override (
+      environmentVariables = (
         {
-          # Default models directory (if not set in home, we use the home directory for models)
-          OLLAMA_MODELS = "${cfg.home}/models";
           # Default parallelism and keep-alive
           OLLAMA_NUM_PARALLEL = "1";
           OLLAMA_KEEP_ALIVE = "1h";
@@ -68,8 +68,11 @@ in
               OLLAMA_KV_CACHE_TYPE = "q8_0";
             }
         )
-        cfg.environmentVariables
+        // cfg.environmentVariables
       );
+    };
+    systemd.services.ollama.environment = lib.optionalAttrs (config.wsl.enable) {
+      LD_LIBRARY_PATH = "/usr/lib/wsl/lib";
     };
   };
 }
