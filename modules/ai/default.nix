@@ -94,7 +94,7 @@ in
   config = lib.mkIf cfg.enable {
     # Litellm needs host environment: some models such as Github Copilot needs auth by hand
     services.litellm = {
-      enable = true;
+      enable = cfg.proxy.enable;
       package = pkgs.pure-unstable.litellm;
       settings = settingsAll;
       host = cfg.proxy.host;

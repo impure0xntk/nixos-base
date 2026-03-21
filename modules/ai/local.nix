@@ -7,20 +7,20 @@ in
   options = {
     my.system.ai.local = {
       enable = lib.mkEnableOption "Whether to enable local service.";
-      package = lib.mkOption {
-        type = lib.types.package;
-        default = pkgs.pure-unstable.ollama;
-        description = "Ollama package to use.";
+      gpu = lib.mkOption {
+        type = lib.types.enum [ "none" "cuda" "rocm" ];
+        default = "none";
+        description = "GPU support for local service.";
       };
       port = lib.mkOption {
         type = lib.types.port;
         default = 11434;
-        description = "Port on which Ollama will listen.";
+        description = "Port on which local service will listen.";
       };
       host = lib.mkOption {
         type = lib.types.str;
         default = "127.0.0.1";
-        description = "Host interface on which Ollama will listen.";
+        description = "Host interface on which local service will listen.";
       };
       loadModels = lib.mkOption {
         type = lib.types.listOf lib.types.str;
@@ -30,15 +30,17 @@ in
       environmentVariables = lib.mkOption {
         type = lib.types.attributeSetOf lib.types.str;
         default = { };
-        description = "Environment variables to pass to the Ollama service.";
+        description = "Environment variables to pass to the local service.";
       };
     };
   };
 
-  config = lib.mkIf (cfgAi.enable && cfg.enable) {
+  config = lib.mkIf cfgAi.enable {
     services.ollama = {
-      enable = true;
-      package = cfg.package;
+      enable = cfg.enable;
+      package = if cfg.gpu == "cuda" then pkgs.pure-unstable.ollama-cuda
+        else if cfg.gpu == "rocm" then pkgs.pure-unstable.ollama-rocm
+        else pkgs.pure-unstable.ollama;
       port = cfg.port;
       host = cfg.host;
       loadModels = cfg.loadModels;
