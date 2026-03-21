@@ -50,7 +50,7 @@ in
       environmentVariables = (
         {
           # Default parallelism and keep-alive
-          OLLAMA_NUM_PARALLEL = "1";
+          OLLAMA_NUM_PARALLEL = "2";
           OLLAMA_KEEP_ALIVE = "1h";
         }
         // # https://blog.peddals.com/ollama-vram-fine-tune-with-kv-cache/
