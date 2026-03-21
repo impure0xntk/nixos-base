@@ -1,11 +1,5 @@
-{ lib, ... }:
+{ config, lib, ... }:
 let
-  commonParams = {
-    temperature = 0.7;
-    top_p = 0.8;
-    top_k = 20;
-    min_p = 0;
-  };
   noThink =
     models:
     (lib.forEach models (info: {
@@ -14,47 +8,27 @@ let
         extra_body.reasoning.exclude = true;
       };
     }));
-in
-rec {
-  qwen3-think = [
-    {
-      model = "groq/qwen/qwen3-32b"; # primary
-      params = { # additional params are unsupported
-      };
-    }
-    {
-      model = "openrouter/qwen/qwen3-30b-a3b:free";
-      params = {
+  models = {
+    qwen3-think = [
+      {
+        model = "groq/qwen/qwen3-32b"; # primary
       }
-      // commonParams;
-    }
-  ];
-  qwen3 = noThink qwen3-think;
-
-  qwen3-big-think = [
-    {
-      model = "openrouter/qwen/qwen3-235b-a22b:free";
-      params = {
+    ];
+    qwen3-coder = [
+      {
+        model = "openrouter/qwen/qwen3-coder:free";
       }
-      // commonParams;
-    }
-  ];
-  qwen3-big = noThink qwen3-big-think;
-
-  qwen3-coder = [
-    {
-      model = "openrouter/qwen/qwen3-coder:free";
-      params = {
-      }
-      //commonParams;
-    }
-  ];
-  "qwen2.5-coder" = [
-    {
-      model = "openrouter/qwen/qwen-2.5-coder-32b-instruct:free";
-      params = {
-      }
-      //commonParams;
-    }
-  ];
+    ];
+    # "qwen3.5-think" = [
+    #   {
+    #     model = "ollama/qwen3.5:9b";
+    #     params = {
+    #       api_url = "http://localhost:1143"; # TODO: parameterize
+    #     };
+    #   }
+    # ];
+  };
+in models // {
+  qwen3 = noThink models.qwen3-think;
+  # "qwen3.5" = noThink models."qwen3.5-think";
 }
