@@ -4,7 +4,7 @@ let
     models:
     (lib.forEach models (info: {
       model = info.model;
-      params = info.params // {
+      params = (info.params or {}) // {
         extra_body.reasoning.exclude = true;
       };
     }));
