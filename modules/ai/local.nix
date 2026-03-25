@@ -51,6 +51,7 @@ in
         {
           # Default parallelism and keep-alive
           OLLAMA_NUM_PARALLEL = "2";
+          OLLAMA_MAX_LOADED_MODELS = "2";
           OLLAMA_KEEP_ALIVE = "1h";
         }
         // # https://blog.peddals.com/ollama-vram-fine-tune-with-kv-cache/
