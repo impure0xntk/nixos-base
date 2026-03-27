@@ -36,9 +36,9 @@
       url = "github:hercules-ci/arion";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    zeroclaw-nix = {
-      url = "github:justinelliottcobb/zeroclaw-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
+    nix-zeroclaw = {
+      url = "github:impure0xntk/nix-zeroclaw";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     nix-lib = {
       url = "github:impure0xntk/nix-lib";
@@ -77,8 +77,7 @@
           pkgs = import nixpkgs {
             inherit system;
             config.allowUnfree = true;
-            overlays = inputs.nix-pkgs.pkgsOverlay.${system}
-              ++ inputs.zeroclaw-nix.overlays.${system};
+            overlays = inputs.nix-pkgs.pkgsOverlay.${system};
           };
           lib = inputs.nix-lib.lib.${system};
         in
@@ -95,7 +94,7 @@
                 arion.nixosModules.arion
                 home-manager.nixosModules.home-manager
                 sops-nix.nixosModules.sops
-                zeroclaw-nix.nixosModules.default
+                nix-zeroclaw.nixosModules.default
               ]
               ++ (lib.flatten (lib.forEach [ ./modules ] (path: lib.my.listDefaultNixDirs { inherit path; })));
           };
