@@ -91,6 +91,7 @@ in
     args = [
       "--executable-path"
       "${lib.getExe purePkgs.ungoogled-chromium}"
+      "--isolated"
     ];
   };
   "pdf-reader" = {
