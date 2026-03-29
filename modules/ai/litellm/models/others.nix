@@ -14,12 +14,6 @@
       params = {};
     }
   ];
-  "trinity-large-preview" = [
-    {
-      model = "openrouter/arcee-ai/trinity-large-preview:free";
-      params = {};
-    }
-  ];
   "nemotoron-3-nano" = [
     {
       model = "openrouter/nvidia/nemotron-3-nano-30b-a3b:free";
@@ -30,6 +24,11 @@
     {
       model = "openrouter/nvidia/nemotron-3-super-120b-a12b:free";
       params = {};
+    }
+  ];
+  "nemotoron-embed" = [
+    {
+      model = "openrouter/nvidia/llama-nemotron-embed-vl-1b-v2:free";
     }
   ];
   "minimax-m2.5" = [
