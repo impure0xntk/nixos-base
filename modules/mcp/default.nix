@@ -130,6 +130,10 @@ in
     my.system.mcp = {
       inherit serverGroupFiles;
     };
+    # https://github.com/NixOS/nixpkgs/issues/97682
+    security.chromiumSuidSandbox.enable = lib.any (
+      serverGroup: (serverGroup.presetServers.playwright.enable or false)
+    ) (lib.attrValues config.my.system.mcp.servers);
   };
 }
 

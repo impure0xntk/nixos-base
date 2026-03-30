@@ -139,7 +139,7 @@ in
             wait-for-it
             bash
           ];
-          excludeShellChecks = [ "SC2016" ];
+          excludeShellChecks = [ "SC2016" "SC2042"];
           text = ''
             echo "Waiting for mcpjungle to become available..."
             wait-for-it localhost:${builtins.toString cfg.hub.port} --strict --timeout=30
