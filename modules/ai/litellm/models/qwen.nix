@@ -19,6 +19,11 @@ let
         model = "openrouter/qwen/qwen3-coder:free";
       }
     ];
+    "qwen3.6-plus" = [
+      {
+        model = "openrouter/qwen/qwen3.6-plus:free";
+      }
+    ];
     # "qwen3.5-think" = [
     #   {
     #     model = "ollama/qwen3.5:9b";
