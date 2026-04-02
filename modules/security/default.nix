@@ -32,6 +32,13 @@
     }
   ];
   # Kernel hardening
+  boot.kernelParams = [
+    "slab_nomerge" # For heap overflow protection
+    "init_on_alloc=1" # Not used init_on_free=1 for performance impact
+    # "l1tf=full,force" # For container host
+    "oops=panic"
+    "lockdown=confidentiality"
+  ];
   boot.kernel.sysctl = lib.my.flatten "_flattenIgnore" {
     vm = {
       mmap_rnd_bits = 32;
