@@ -56,7 +56,7 @@ in
         }
         // # https://blog.peddals.com/ollama-vram-fine-tune-with-kv-cache/
         (
-          if lib.any (m: lib.hasInfix "gemma3" m) cfg.loadModels then
+          if lib.any (m: lib.hasInfix "gemma" m) cfg.loadModels then
             {
               # For gemma3
               OLLAMA_FLASH_ATTENTION = "0";
