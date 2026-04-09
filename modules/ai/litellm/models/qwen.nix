@@ -9,17 +9,10 @@ let
       };
     }));
   models = {
-    qwen3 = [
-      {
-        model = "groq/qwen/qwen3-32b"; # primary
-      }
-    ];
-    qwen3-coder = [
-      {
-        model = "openrouter/qwen/qwen3-coder:free";
-      }
+    "qwen3.5" = [
+      { model = "nanogpt/qwen/qwen3.5-397b-a17b-thinking"; }
     ];
   };
 in models // {
-  qwen3-nothink = noThink models.qwen3;
+  "qwen3.5-nothink" = noThink models."qwen3.5";
 }

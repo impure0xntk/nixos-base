@@ -1,13 +1,6 @@
 { lib, opencodeZenParams, ... }:
 
 {
-  "glm-4.5-air" = [
-    {
-      model = "openrouter/z-ai/glm-4.5-air:free";
-      params = {
-      };
-    }
-  ];
   "trinity-large" = [
     {
       model = "openrouter/arcee-ai/trinity-large-preview:free";

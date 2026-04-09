@@ -45,6 +45,7 @@ modelsFinal (
   // (import ./qwen.nix { inherit lib; })
   // (import ./openai.nix { inherit lib githubCopilotParams openaiParams; })
   // (import ./x.nix { inherit lib; })
+  // (import ./zai.nix { inherit lib; })
   // (import ./others.nix { inherit lib opencodeZenParams; }) // { })
 
 #   modelsRaw = {
