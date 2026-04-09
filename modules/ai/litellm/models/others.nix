@@ -8,15 +8,9 @@
       };
     }
   ];
-  "step-3.5-flash" = [
+  "trinity-large" = [
     {
-      model = "openrouter/stepfun/step-3.5-flash:free";
-      params = {};
-    }
-  ];
-  "nemotoron-3-nano" = [
-    {
-      model = "openrouter/nvidia/nemotron-3-nano-30b-a3b:free";
+      model = "openrouter/arcee-ai/trinity-large-preview:free";
       params = {};
     }
   ];

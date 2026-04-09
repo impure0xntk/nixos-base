@@ -5,17 +5,19 @@
 # For details, see https://docs.litellm.ai/docs/providers/github_copilot
 { lib, githubCopilotParams, openaiParams, ... }:
 let
-  gptOssParams = {
-    temperature = 0.6;
-    top_p = 1.0;
-    top_k = 0;
-  };
 in
 {
   gpt-oss-120b = [
     {
       model = "groq/openai/gpt-oss-120b";
       params = { # additional params are unsupported
+        order = 1;
+      };
+    }
+    {
+      model = "openrouter/openai/gpt-oss-120b:free";
+      params = {
+        order = 2;
       };
     }
   ];
@@ -23,12 +25,14 @@ in
     {
       model = "groq/openai/gpt-oss-20b"; # primary
       params = { # additional params are unsupported
+        order = 1;
       };
     }
     {
       model = "openrouter/openai/gpt-oss-20b:free";
       params = {
-      } // gptOssParams;
+        order = 2;
+      };
     }
   ];
   "gpt-5.4" = [
