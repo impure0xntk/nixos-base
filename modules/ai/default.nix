@@ -63,6 +63,7 @@ in
 
   imports = [
     ./local.nix
+    ./NanoProxy.nix
   ];
 
   config = lib.mkIf cfg.enable {
@@ -85,10 +86,11 @@ in
 
         # For GitHub Copilot
         GITHUB_COPILOT_TOKEN_DIR = "${config.services.litellm.stateDir}/github_copilot";
+        # For NanoGPT tool calling. See ./NanoProxy.nix
+        NANOGPT_API_BASE = "http://${cfg.proxy.host}:8787";
       } // (lib.optionalAttrs (cfgProxy != "") {
         HTTPS_PROXY = cfgProxy;
       });
-
     };
   };
 }

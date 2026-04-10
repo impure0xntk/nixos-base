@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, nanogptParams, ... }:
 let
   noThink =
     models:
@@ -10,10 +10,10 @@ let
     }));
   models = {
     "qwen3.5-think" = [
-      { model = "nano-gpt/qwen/qwen3.5-397b-a17b-thinking"; }
+      { model = "openai/qwen/qwen3.5-397b-a17b-thinking"; params = nanogptParams; }
     ];
     "qwen3.5" = [
-      { model = "nano-gpt/qwen/qwen3.5-397b-a17b"; }
+      { model = "openai/qwen/qwen3.5-397b-a17b"; params = nanogptParams; }
     ];
   };
 in models // {

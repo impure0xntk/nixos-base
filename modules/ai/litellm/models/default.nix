@@ -34,19 +34,23 @@ let
   openaiParams = {
     api_key = "os.environ/OPENAI_API_KEY";
   };
+  nanogptParams = {
+    api_base = "os.environ/NANOGPT_API_BASE"; # See ./../NanoProxy.nix
+    api_key = "os.environ/NANOGPT_API_KEY";
+  };
 in
 modelsFinal (
   (import ./claude.nix { inherit lib githubCopilotParams; })
-  // import ./deepseek.nix { inherit lib; }
+  // import ./deepseek.nix { inherit lib nanogptParams; }
   // (import ./google.nix { inherit lib; })
   // (import ./meta.nix { inherit lib; })
-  // (import ./mistralai.nix { inherit lib; })
+  // (import ./mistralai.nix { inherit lib nanogptParams; })
   // (import ./moonshotai.nix { inherit lib opencodeZenParams; })
-  // (import ./qwen.nix { inherit lib; })
+  // (import ./qwen.nix { inherit lib nanogptParams; })
   // (import ./openai.nix { inherit lib githubCopilotParams openaiParams; })
   // (import ./x.nix { inherit lib; })
-  // (import ./zai.nix { inherit lib; })
-  // (import ./others.nix { inherit lib opencodeZenParams; }) // { })
+  // (import ./zai.nix { inherit lib nanogptParams; })
+  // (import ./others.nix { inherit lib opencodeZenParams nanogptParams; }) // { })
 
 #   modelsRaw = {
 #     qwen3 = [

@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, nanogptParams, ... }:
 {
   "glm-4.5-air" = [
     {
@@ -8,15 +8,15 @@
     }
   ];
   "glm-4.6-derestricted" = [
-    { model = "nano-gpt/GLM-4.6-Derestricted-v5"; }
+    { model = "openai/GLM-4.6-Derestricted-v5"; params = nanogptParams; }
   ];
   "glm-4.7" = [
-    { model = "nano-gpt/zai-org/glm-4.7"; }
+    { model = "openai/zai-org/glm-4.7"; params = nanogptParams; }
   ];
   glm-5 = [
-    { model = "nano-gpt/zai-org/glm-5"; }
+    { model = "openai/zai-org/glm-5"; params = nanogptParams; }
   ];
   glm-5-think = [
-    { model = "nano-gpt/zai-org/glm-5:thinking"; }
+    { model = "openai/zai-org/glm-5:thinking"; params = nanogptParams; }
   ];
 }

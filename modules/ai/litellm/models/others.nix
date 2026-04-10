@@ -1,4 +1,4 @@
-{ lib, opencodeZenParams, ... }:
+{ lib, opencodeZenParams, nanogptParams, ... }:
 
 {
   "trinity-large" = [
@@ -18,10 +18,10 @@
   ];
   "minimax-m2.5" = [
     {
-      model = "nano-gpt/minimax/minimax-m2.5";
+      model = "openai/minimax/minimax-m2.5";
       params = {
         order = 1;
-      };
+      } // nanogptParams;
     }
     {
       model = "openrouter/minimax/minimax-m2.5:free";
@@ -31,7 +31,7 @@
     }
   ];
   "minimax-m2.7" = [
-    { model = "nano-gpt/minimax/minimax-m2.7"; }
+    { model = "openai/minimax/minimax-m2.7"; params = nanogptParams; }
   ];
   text-to-speech-playai-tts = [
     {
