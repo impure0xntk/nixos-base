@@ -4,13 +4,11 @@
   "trinity-large" = [
     {
       model = "openrouter/arcee-ai/trinity-large-preview:free";
-      params = {};
     }
   ];
   "nemotoron-3-super" = [
     {
       model = "openrouter/nvidia/nemotron-3-super-120b-a12b:free";
-      params = {};
     }
   ];
   "nemotoron-embed" = [
@@ -20,9 +18,20 @@
   ];
   "minimax-m2.5" = [
     {
-      model = "openai/minimax-m2.5-free";
-      params = opencodeZenParams;
+      model = "nano-gpt/minimax/minimax-m2.5";
+      params = {
+        order = 1;
+      };
     }
+    {
+      model = "openrouter/minimax/minimax-m2.5:free";
+      params = {
+        order = 2;
+      };
+    }
+  ];
+  "minimax-m2.7" = [
+    { model = "nano-gpt/minimax/minimax-m2.7"; }
   ];
   text-to-speech-playai-tts = [
     {

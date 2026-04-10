@@ -9,10 +9,13 @@ let
       };
     }));
   models = {
+    "qwen3.5-think" = [
+      { model = "nano-gpt/qwen/qwen3.5-397b-a17b-thinking"; }
+    ];
     "qwen3.5" = [
-      { model = "nanogpt/qwen/qwen3.5-397b-a17b-thinking"; }
+      { model = "nano-gpt/qwen/qwen3.5-397b-a17b"; }
     ];
   };
 in models // {
-  "qwen3.5-nothink" = noThink models."qwen3.5";
+  # "qwen3.5-nothink" = noThink models."qwen3.5";
 }
