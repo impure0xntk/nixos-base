@@ -81,6 +81,7 @@ in
         SCARF_NO_ANALYTICS = "True";
         DISABLE_ADMIN_UI = "True";
         NO_DOCS = "True";
+        HOME = config.systemd.services.litellm.serviceConfig.WorkingDirectory;
 
         # For GitHub Copilot
         GITHUB_COPILOT_TOKEN_DIR = "${config.services.litellm.stateDir}/github_copilot";
