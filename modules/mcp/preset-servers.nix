@@ -20,8 +20,6 @@ let
         "sequential-thinking" # instead of think
         "security"
         "security_override"
-        "github"
-        "code_skim"
       ];
       DISABLED_FUNCTIONS = lib.concatStringsSep "," [
         "calculator"
@@ -57,6 +55,7 @@ let
       ];
       ENABLE_ADDITIONAL_TOOLS = devtoolsArgsMinimal.env.ENABLE_ADDITIONAL_TOOLS + "," + (lib.concatStringsSep "," [
         "github"
+        "code_skim"
         "pdf"
         # TODO: enable after NixOS 26.05
         # "process_document"
