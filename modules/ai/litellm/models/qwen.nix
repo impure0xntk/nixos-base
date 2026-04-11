@@ -15,6 +15,10 @@ let
     "qwen3.5" = [
       { model = "openai/qwen/qwen3.5-397b-a17b"; params = nanogptParams; }
     ];
+    # For role play
+    "qwen3.5-bluestar-v2-light" = [
+      { model = "openai/Qwen3.5-27B-BlueStar-v2-Derestricted-Lite"; params = nanogptParams; }
+    ];
   };
 in models // {
   # "qwen3.5-nothink" = noThink models."qwen3.5";
