@@ -20,6 +20,8 @@ let
         "sequential-thinking" # instead of think
         "security"
         "security_override"
+        "github"
+        "code_skim"
       ];
       DISABLED_FUNCTIONS = lib.concatStringsSep "," [
         "calculator"
