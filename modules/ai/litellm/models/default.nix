@@ -47,7 +47,7 @@ modelsFinal (
   // (import ./mistralai.nix { inherit lib nanogptParams; })
   // (import ./moonshotai.nix { inherit lib opencodeZenParams; })
   // (import ./qwen.nix { inherit lib nanogptParams; })
-  // (import ./openai.nix { inherit lib githubCopilotParams openaiParams; })
+  // (import ./openai.nix { inherit lib githubCopilotParams openaiParams nanogptParams; })
   // (import ./x.nix { inherit lib; })
   // (import ./zai.nix { inherit lib nanogptParams; })
   // (import ./others.nix { inherit lib opencodeZenParams nanogptParams; }) // { })

@@ -3,21 +3,26 @@
 #    Use "systemctl cat --user litellm.service" ans exec ExecStart command from interactive commandline.
 # 2. You can start litellm automatically.
 # For details, see https://docs.litellm.ai/docs/providers/github_copilot
-{ lib, githubCopilotParams, openaiParams, ... }:
+{ lib, githubCopilotParams, openaiParams, nanogptParams, ... }:
 let
 in
 {
   gpt-oss-120b = [
     {
+      model = "openai/openai/gpt-oss-120b"; params = {
+        order = 1;
+      } // nanogptParams;
+    }
+    {
       model = "groq/openai/gpt-oss-120b";
       params = { # additional params are unsupported
-        order = 1;
+        order = 2;
       };
     }
     {
       model = "openrouter/openai/gpt-oss-120b:free";
       params = {
-        order = 2;
+        order = 3;
       };
     }
   ];
