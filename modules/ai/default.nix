@@ -20,6 +20,11 @@ let
       drop_params = true;
     };
     model_list = cfg.proxy.model_list;
+    router_settings = {
+      base_delay = 3;
+      max_delay = 15;
+      jitter = true;
+    };
   };
   settingsAll = lib.recursiveUpdate settingsDefault cfg.proxy.settings;
 in

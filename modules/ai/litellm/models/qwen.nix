@@ -9,6 +9,9 @@ let
       };
     }));
   models = {
+    "qwen3-coder" = [
+      { model = "openrouter/qwen/qwen3-coder:free"; }
+    ];
     "qwen3.5-think" = [
       { model = "openai/qwen/qwen3.5-397b-a17b-thinking"; params = nanogptParams; }
     ];

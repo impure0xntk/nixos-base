@@ -37,6 +37,7 @@ let
   nanogptParams = {
     api_base = "os.environ/NANOGPT_API_BASE"; # See ./../NanoProxy.nix
     api_key = "os.environ/NANOGPT_API_KEY";
+    retry_on_status_codes = [ 404 ];
   };
 in
 modelsFinal (
