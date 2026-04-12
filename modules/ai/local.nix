@@ -53,22 +53,10 @@ in
           OLLAMA_NUM_PARALLEL = "2";
           OLLAMA_MAX_LOADED_MODELS = "2";
           OLLAMA_KEEP_ALIVE = "1h";
+
+          OLLAMA_FLASH_ATTENTION = "1";
+          OLLAMA_KV_CACHE_TYPE = "q8_0";
         }
-        // # https://blog.peddals.com/ollama-vram-fine-tune-with-kv-cache/
-        (
-          if lib.any (m: lib.hasInfix "gemma" m) cfg.loadModels then
-            {
-              # For gemma3
-              OLLAMA_FLASH_ATTENTION = "0";
-              OLLAMA_KV_CACHE_TYPE = "f16";
-            }
-          else
-            {
-              # General
-              OLLAMA_FLASH_ATTENTION = "1";
-              OLLAMA_KV_CACHE_TYPE = "q8_0";
-            }
-        )
         // cfg.environmentVariables
       );
     };
