@@ -14,6 +14,7 @@ in {
         PROXY_HOST = cfg.host;
         PROXY_PORT = "8787";
         UPSTREAM_BASE_URL = "https://nano-gpt.com/api/subscription/v1"; # subscription models only
+        NANOPROXY_DEBUG = "1";
       };
       serviceConfig = {
         ExecStart = "${pkgs.NanoProxy}/bin/nanoproxy";
