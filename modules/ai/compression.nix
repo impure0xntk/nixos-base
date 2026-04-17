@@ -13,6 +13,7 @@ in {
       after = [ "network-online.target" ];
       environment = {
         HEADROOM_SAVINGS_PATH  = "/tmp/proxy_saving.json";
+        HF_HOME = "/tmp/cache"; # For downloading onnx models
       };
       serviceConfig = {
         ExecStart = lib.concatStringsSep " " [
