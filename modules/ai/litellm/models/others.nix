@@ -1,9 +1,14 @@
 { lib, opencodeZenParams, nanogptParams, ... }:
 
 {
-  "trinity-large" = [
+  hy3 = [
     {
-      model = "openrouter/arcee-ai/trinity-large-preview:free";
+      model = "openrouter/tencent/hy3-preview:free";
+    }
+  ];
+  "ling-2.6-flash" = [
+    {
+      model = "openrouter/inclusionai/ling-2.6-flash:free";
     }
   ];
   "nemotoron-3-super" = [

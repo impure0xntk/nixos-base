@@ -12,11 +12,11 @@ let
     "qwen3-coder" = [
       { model = "openrouter/qwen/qwen3-coder:free"; }
     ];
-    "qwen3.5-think" = [
-      { model = "openai/qwen/qwen3.5-397b-a17b-thinking"; params = nanogptParams; }
+    "qwen3.6" = [
+      { model = "openai/Qwen/Qwen3.6-35B-A3B"; params = nanogptParams; }
     ];
-    "qwen3.5" = [
-      { model = "openai/qwen/qwen3.5-397b-a17b"; params = nanogptParams; }
+    "qwen3.6-think" = [
+      { model = "openai/Qwen/Qwen3.6-35B-A3B:thinking"; params = nanogptParams; }
     ];
     # For role play
     "qwen3.5-bluestar" = [
