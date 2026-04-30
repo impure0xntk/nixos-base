@@ -6,11 +6,6 @@
       model = "openrouter/tencent/hy3-preview:free";
     }
   ];
-  "ling-2.6-flash" = [
-    {
-      model = "openrouter/inclusionai/ling-2.6-flash:free";
-    }
-  ];
   "nemotoron-3-super" = [
     {
       model = "openrouter/nvidia/nemotron-3-super-120b-a12b:free";
