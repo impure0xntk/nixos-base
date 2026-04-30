@@ -1,37 +1,9 @@
-{
-  nixpkgs,
-  pkgs,
-  lib,
-  system,
-  self,
-}:
-
-(nixpkgs.lib.nixosSystem {
-  inherit system lib pkgs;
-  modules = [
-    self.nixosModules.${system}.mySystemModules
-    self.nixosModules.${system}.mySystemPlatform.wsl
-    ({config, ...}: {
-      users = {
-        users = {
-          # The first is default user.
-          nixos = {
-            password = "foobar";
-            group = "nixos";
-            extraGroups = [ "wheel" ];
-            isNormalUser = true;
-          };
-        };
-        groups = {
-          nixos = { };
-        };
-      };
-      my.system.users = {
-        adminUser = "nixos";
-        # devUsers = ["nixos"];
-      };
-      # home-manager.users.nixos.home.stateVersion = config.system.stateVersion;
-      my.system.worklog.enable = true;
-    })
-  ];
-}).config.system.build.toplevel
+args@{ nixpkgs, pkgs, lib, system, self }:
+let
+  mkTest = drvPath: import drvPath args;
+in {
+  core-default = mkTest ./core/default.nix;
+  # core-minimal = mkTest ./core/minimal.nix;
+  # core-memory-management = mkTest ./core/memory-management.nix;
+  # core-ntp = mkTest ./core/ntp.nix;
+}

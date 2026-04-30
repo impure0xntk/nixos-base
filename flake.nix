@@ -1,7 +1,7 @@
 {
   inputs = {
-    nixos.url = "github:Nixos/nixpkgs/nixos-25.05";
-    nixpkgs.url = "github:Nixos/nixpkgs/release-25.05";
+    nixos.url = "github:Nixos/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:Nixos/nixpkgs/release-25.11";
     nixpkgs-unstable.url = "github:Nixos/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     lix = {
@@ -17,7 +17,7 @@
       };
     };
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
+      url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-wsl = {
@@ -126,7 +126,7 @@
               };
           };
 
-          checks.mySystemModules = import ./tests/modules {
+          checks = import ./tests/modules {
             inherit
               nixpkgs
               pkgs
