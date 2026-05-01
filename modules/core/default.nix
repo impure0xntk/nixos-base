@@ -62,7 +62,6 @@ in
         "panic=1"
         "boot.panic_on_fail"
       ]);
-    systemd.enableEmergencyMode = lib.mkDefault cfg.mutableSystem;
 
     boot.tmp.useTmpfs = false; # nix build no disk space workaround, don't use tmpfs
 
