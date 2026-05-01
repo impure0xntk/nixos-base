@@ -32,10 +32,6 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    arion = {
-      url = "github:hercules-ci/arion";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     nix-zeroclaw = {
       url = "github:impure0xntk/nix-zeroclaw";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -91,7 +87,6 @@
                 lix-module.nixosModules.default # Use lix instead of nix
                 nixos-wsl.nixosModules.default
                 nix-index-database.nixosModules.nix-index
-                arion.nixosModules.arion
                 home-manager.nixosModules.home-manager
                 sops-nix.nixosModules.sops
                 nix-zeroclaw.nixosModules.default
