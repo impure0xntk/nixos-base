@@ -34,10 +34,6 @@ in
       enable = config.system.activatable;
       settings = {
         auto-optimise-store = true;
-        experimental-features = [
-          "nix-command"
-          "flakes"
-        ];
       };
       daemonCPUSchedPolicy = "idle";
     };
@@ -62,9 +58,6 @@ in
         "panic=1"
         "boot.panic_on_fail"
       ]);
-
-    boot.tmp.useTmpfs = false; # nix build no disk space workaround, don't use tmpfs
-
     # udev: device management.
     # https://discourse.nixos.org/t/enable-none-in-the-i-o-scheduler/36566/7 https://discourse.nixos.org/t/enable-none-in-the-i-o-scheduler/36566/7
     services.udev = {

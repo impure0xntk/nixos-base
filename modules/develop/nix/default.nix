@@ -16,6 +16,13 @@ in {
         message = "Couldn't find Development users.";
       }
     ];
+
+    nix.settings.experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
+    boot.tmp.useTmpfs = false; # nix build no disk space workaround, don't use tmpfs
+
     # By default, lix is enabled for all.
     # Ensure it's enabled only when cfg.enable as developer environment is true.
     lix.enable = cfg.enable;
