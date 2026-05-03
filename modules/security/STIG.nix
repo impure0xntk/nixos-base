@@ -271,7 +271,7 @@ in
     # V-268140: (root directory perm) skip
 
     # V-268141
-    boot.kernel.sysctl."net.ipv4.tcp_syncookies" = 1;
+    boot.kernel.sysctl."net.ipv4.tcp_syncookies" = lib.mkDefault 1;
 
     # V-26814{2,3}: (ssh client alive interval): skip
     # V-268144: (LUKS-Encrypted File Systems): skip
@@ -346,9 +346,9 @@ in
 
     boot.kernel.sysctl = {
       # V-268160
-      "kernel.kptr_restrict" = 1;
+      "kernel.kptr_restrict" = lib.mkDefault 1;
       # V-268161
-      "kernel.randomize_va_space" = 2;
+      "kernel.randomize_va_space" = lib.mkDefault 2;
     };
 
     # V-268162: (nixos remove old packages after upgrade) skip
