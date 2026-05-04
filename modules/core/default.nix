@@ -147,7 +147,6 @@ in
   # And modulesPath: https://discourse.nixos.org/t/how-to-import-a-nixpkgs-profile-using-nixos-configuration-flake/21399/2
   imports = [
     (modulesPath + "/profiles/minimal.nix")
-    (modulesPath + "/profiles/hardened.nix")
 
     (modulesPath + "/profiles/headless.nix")
 

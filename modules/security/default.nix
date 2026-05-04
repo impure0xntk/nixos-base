@@ -18,8 +18,20 @@ in
       message = "Use sudo-rs instead of sudo, and set nothing to security.sudo";
     }
   ];
-
+  # NixOS -25.11 official hardened profile
+  boot.kernelPackages = lib.mkDefault pkgs.linuxKernel.packages.linux_hardened;
+  nix.settings.allowed-users = lib.mkDefault [ "@users" ];
+  environment.memoryAllocator.provider = lib.mkDefault "scudo";
+  environment.variables.SCUDO_OPTIONS = lib.mkDefault "zero_contents=true";
+  security.lockKernelModules = lib.mkDefault true;
+  security.protectKernelImage = lib.mkDefault true;
+  security.allowSimultaneousMultithreading = lib.mkDefault false;
+  security.forcePageTableIsolation = lib.mkDefault true;
+  # This is required by podman to run containers in rootless mode.
+  security.unprivilegedUsernsClone = lib.mkDefault config.virtualisation.containers.enable;
+  security.virtualisation.flushL1DataCache = lib.mkDefault "always";
   security.apparmor.enable = lib.mkDefault true;
+  security.apparmor.killUnconfinedConfinables = lib.mkDefault true;
 
   # Replace sudo to sudo-rs, and only allow wheel group
   security.sudo.enable = false;
