@@ -66,8 +66,10 @@ in
     variables.SCUDO_OPTIONS = ""; # TODO: resolve
 
     # mimalloc: high performance memory allocator.
-    # but cannot use chromium, vscode, and nvidia-ctk, so disable it... 
+    # but cannot use chromium, vscode, and nvidia-ctk, so disable it...
     #
     # memoryAllocator.provider = "mimalloc";
+
+    memoryAllocator.provider = "graphene-hardened-light";
   };
 }
