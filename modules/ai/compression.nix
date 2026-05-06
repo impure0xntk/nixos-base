@@ -17,7 +17,7 @@ in {
       };
       serviceConfig = {
         ExecStart = lib.concatStringsSep " " [
-          "${pkgs.headroom-ai}/bin/headroom" "proxy"
+          "${pkgs.my.headroom-ai}/bin/headroom" "proxy"
           "--host" cfg.host
           "--port" "${toString cfg.compression.port}"
           "--log-file" "/tmp/headroom-log.jsonl"

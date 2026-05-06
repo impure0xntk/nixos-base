@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }:
 let
   cfg = config.my.system.rss-feed;
-  miniflux = pkgs.pure-unstable.miniflux;
+  miniflux = pkgs.unstable.miniflux;
 in {
   options.my.system.rss-feed = {
     enable = lib.mkEnableOption "Whether to enable rss-feed daemon.";

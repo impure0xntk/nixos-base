@@ -24,7 +24,7 @@ in {
   config = lib.mkIf cfg.enable {
     services.outline = {
       enable = true;
-      package = pkgs.pure-unstable.outline;
+      package = pkgs.unstable.outline;
       port = cfg.port;
       publicUrl = "http://${cfg.host}:${toString cfg.port}";
       forceHttps = false;

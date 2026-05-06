@@ -11,7 +11,6 @@ with lib;
 with lib.types;
 let
   cfg = config.my.system.mcp;
-  mainPkgs = pkgs;
   workingDirectory = "/var/lib/mcpjungle";
   environmentVariablesForProxy = lib.optionals (config.my.system.networks.proxy != "") [
     "https_proxy=${config.my.system.networks.proxy}"
@@ -22,9 +21,9 @@ let
     groupConfig.configFiles or {}
   );
   mcpJungleWithRuntime = pkgs.symlinkJoin {
-    name = pkgs.mcpjungle.pname;
+    name = pkgs.my.mcpjungle.pname;
     paths = with pkgs; [
-      mcpjungle
+      my.mcpjungle
 
       # node
       nodejs
@@ -129,14 +128,14 @@ in
         '';
         script = pkgs.writeShellApplication {
           name = "setup-mcpjungle";
-          runtimeInputs = with mainPkgs; [
+          runtimeInputs = with pkgs; [
             gnugrep
             gnused
             coreutils
             findutils
             jq
             mcpJungleWithRuntime
-            wait-for-it
+            my.wait-for-it
             bash
           ];
           excludeShellChecks = [ "SC2016" "SC2042"];
@@ -216,7 +215,7 @@ in
         User = cfg.hub.user;
         Group = cfg.hub.group;
         WorkingDirectory = workingDirectory;
-        ExecStart = "${mainPkgs.mcpjungle}/bin/mcpjungle start --port ${builtins.toString cfg.hub.port}";
+        ExecStart = "${pkgs.my.mcpjungle}/bin/mcpjungle start --port ${builtins.toString cfg.hub.port}";
         Environment = environmentVariablesForProxy;
         EnvironmentFile = cfg.hub.environmentFiles;
         Restart = "on-failure";

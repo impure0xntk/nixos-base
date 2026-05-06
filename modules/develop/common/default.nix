@@ -45,7 +45,7 @@ in
     programs.vim = {
       enable = true;
       # package = vimTiny;
-      package = pkgs.vim-tiny-customized;
+      package = pkgs.my.vim-tiny-customized;
       defaultEditor = true;
     };
 

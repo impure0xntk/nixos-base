@@ -5,15 +5,13 @@
   ...
 }:
 let
-  purePkgs = pkgs.pure-unstable; # to avoid build ungoogled-chromium because it uses too much RAM
-
   createDevtools = { package, env }:{
     command = lib.getExe package;
     args = [ ];
     env = env;
   };
   devtoolsArgsMinimal = {
-    package = pkgs.mcp-server-devtools;
+    package = pkgs.my.mcp-server-devtools;
     env =  {
       ENABLE_ADDITIONAL_TOOLS = lib.concatStringsSep "," [
         "memory"
@@ -30,7 +28,7 @@ let
     };
   };
   devtoolsArgsLocalWebSearch = {
-    package = pkgs.mcp-server-devtools;
+    package = pkgs.my.mcp-server-devtools;
     env =  devtoolsArgsMinimal.env // {
       # TODO: refactor to support the changing of these URLs without needing to override the whole package
       SEARXNG_BASE_URL = lib.concatStringsSep "," [
@@ -39,11 +37,11 @@ let
     };
   };
   devtoolsArgsAll = {
-    package = pkgs.mcp-server-devtools.withPackages [
+    package = pkgs.my.mcp-server-devtools.withPackages [
       # TODO: enable after NixOS 26.05
       # # For docling override
-      # (purePkgs.python3Packages.toPythonApplication (purePkgs.python3Packages.docling.override { # for process_document tool
-      #   docling-parse = purePkgs.python3Packages.docling-parse.overrideAttrs (old: {
+      # (pkgs.unstable.python3Packages.toPythonApplication (pkgs.unstable.python3Packages.docling.override { # for process_document tool
+      #   docling-parse = pkgs.unstable.python3Packages.docling-parse.overrideAttrs (old: {
       #     meta.broken = false; # TODO: remove after NixOS 26.05
       #   });
       # }))
@@ -68,7 +66,7 @@ let
 in
 {
   arxiv = {
-    command = lib.getExe pkgs.mcp-server-arxiv;
+    command = lib.getExe pkgs.my.mcp-server-arxiv;
     args = [ ];
   };
   devtools-minimal = createDevtools devtoolsArgsMinimal;
@@ -79,44 +77,44 @@ in
     args = [ ];
   };
   nixos = {
-    command = lib.getExe purePkgs.mcp-nixos;
+    command = lib.getExe pkgs.unstable.mcp-nixos;
     args = [ ];
   };
   excel = {
-    command = lib.getExe pkgs.mcp-server-excel;
+    command = lib.getExe pkgs.my.mcp-server-excel;
     args = [ "stdio" ];
   };
   playwright = {
     # Use ungoogled-chromium
-    command = lib.getExe purePkgs.playwright-mcp;
+    command = lib.getExe pkgs.unstable.playwright-mcp;
     args = [
       "--executable-path"
-      "${lib.getExe purePkgs.ungoogled-chromium}"
+      "${lib.getExe pkgs.unstable.ungoogled-chromium}"
       "--isolated"
     ];
   };
   "pdf-reader" = {
-    command = lib.getExe pkgs.mcp-server-pdf-reader;
+    command = lib.getExe pkgs.my.mcp-server-pdf-reader;
     args = [ ];
   };
   markitdown = {
-    command = lib.getExe purePkgs.markitdown-mcp;
+    command = lib.getExe pkgs.unstable.markitdown-mcp;
     args = [ ];
   };
   ocr = {
-    command = lib.getExe pkgs.mcp-server-ocr;
+    command = lib.getExe pkgs.my.mcp-server-ocr;
     args = [ ];
   };
   quickchart = {
-    command = lib.getExe pkgs.mcp-server-quickchart;
+    command = lib.getExe pkgs.my.mcp-server-quickchart;
     args = [ ];
   };
   jetbrains = {
-    command = lib.getExe pkgs.mcp-server-jetbrains;
+    command = lib.getExe pkgs.my.mcp-server-jetbrains;
     args = [ ];
   };
   serena = {
-    command = lib.getExe pkgs.serena;
+    command = lib.getExe pkgs.my.serena;
     args = [
       "start-mcp-server"
       "--enable-web-dashboard"
@@ -125,13 +123,13 @@ in
   };
   atlassian = {
     # TODO: may be able to replace to "url"
-    command = lib.getExe pkgs.mcp-server-remote;
+    command = lib.getExe pkgs.my.mcp-server-remote;
     args = [
       "https://mcp.atlassian.com/v1/sse"
     ];
   };
   azure-devops = {
-    command = lib.getExe pkgs.mcp-server-azure-devops;
+    command = lib.getExe pkgs.my.mcp-server-azure-devops;
     args = [
       "!! input your organization manually !!!"
     ];
@@ -140,20 +138,20 @@ in
     url = "https://api.githubcopilot.com/mcp/";
   };
   spec-workflow = {
-    command = lib.getExe pkgs.mcp-server-spec-workflow;
+    command = lib.getExe pkgs.my.mcp-server-spec-workflow;
     args = [
       "/path/to/your/project"
       "--AutoStartDashboard"
     ];
   };
   lsp = {
-    command = lib.getExe purePkgs.mcp-language-server;
+    command = lib.getExe pkgs.unstable.mcp-language-server;
     args = [
       "!! input your project path manually !!!"
     ];
   };
   mysql = {
-    command = lib.getExe pkgs.mcp-server-mysql;
+    command = lib.getExe pkgs.my.mcp-server-mysql;
     args = [ ];
     env = {
       MYSQL_HOST = "127.0.0.1";
@@ -167,7 +165,7 @@ in
     };
   };
   wireshark = {
-    command = lib.getExe pkgs.mcp-server-wireshark;
+    command = lib.getExe pkgs.my.mcp-server-wireshark;
     args = [ ];
   };
   textlint = lib.optionalAttrs config.my.home.documentation.enable {
@@ -177,11 +175,11 @@ in
     ];
   };
   yfinance = {
-    command = lib.getExe pkgs.mcp-server-yfinance;
+    command = lib.getExe pkgs.my.mcp-server-yfinance;
     args = [ ];
   };
   investor-agent = {
-    command = lib.getExe pkgs.mcp-server-investor-agent;
+    command = lib.getExe pkgs.my.mcp-server-investor-agent;
     args = [ ];
   };
   wakapi = {
@@ -195,7 +193,7 @@ in
   };
   vscode = {
     # see the bottom of this file
-    command = lib.getExe pkgs.mcp-server-remote;
+    command = lib.getExe pkgs.my.mcp-server-remote;
     args = [
       "http://localhost:13001/mcp"
     ];

@@ -81,7 +81,7 @@ in
     # Litellm needs host environment: some models such as Github Copilot needs auth by hand
     services.litellm = {
       enable = cfg.proxy.enable;
-      package = pkgs.pure-unstable.litellm;
+      package = pkgs.unstable.litellm;
       settings = settingsAll;
       host = cfg.proxy.host;
       port = cfg.proxy.port;

@@ -19,7 +19,7 @@ in {
   config = lib.mkIf cfg.enable {
     services.searx = {
       enable = true;
-      package = pkgs.pure-unstable.searxng;
+      package = pkgs.unstable.searxng;
       settings = {
         general = {
           debug = false;

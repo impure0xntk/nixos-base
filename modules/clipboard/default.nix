@@ -21,7 +21,7 @@ in {
       wantedBy = [ "multi-user.target" ];
       after = [ "network.target" ];
       wants = [ "network.target" ];
-      description = "${pkgs.clipcascade-server.meta.description}";
+      description = "${pkgs.my.clipcascade-server.meta.description}";
       serviceConfig = {
         Type = "simple";
         RestartSec = 60;
@@ -78,7 +78,7 @@ in {
         RestrictNamespaces = true;
         RestrictRealtime = true;
         RestrictSUIDSGID = true;
-        ExecStart = lib.getExe pkgs.clipcascade-server;
+        ExecStart = lib.getExe pkgs.my.clipcascade-server;
         # CC_ADDRESS is only be able to use with custom ClipCascade build: patch required.
         EnvironmentFile = pkgs.writeText "clipcascade-server-envfile" ''
           CC_ADDRESS=${cfg.host}

@@ -3,10 +3,10 @@ let
   cfg = config.my.system.chat;
 
   # https://matrix-construct.github.io/tuwunel/deploying/nixos.html#jemalloc-and-hardened-profile
-/*   package = pkgs.pure-unstable.matrix-tuwunel.override {
+/*   package = pkgs.unstable.matrix-tuwunel.override {
     enableJemalloc = false;
   }; */
-  package = pkgs.pure-unstable.matrix-tuwunel;
+  package = pkgs.unstable.matrix-tuwunel;
 in
 {
   options.my.system.chat = {

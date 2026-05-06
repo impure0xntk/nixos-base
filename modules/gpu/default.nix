@@ -7,7 +7,6 @@
 }:
 let
   cfg = config.my.system.gpu;
-  purePkgs = pkgs.pure; # to avoid build linux because it's build is too slow
 in
 {
   options.my.system.gpu = {
@@ -33,12 +32,12 @@ in
         hardware.nvidia.open = true;
 
         environment.sessionVariables = {
-          CUDA_PATH = "${purePkgs.cudatoolkit}";
-          EXTRA_LDFLAGS = "-L/lib -L${purePkgs.linuxPackages.nvidia_x11}/lib";
+          CUDA_PATH = "${pkgs.cudatoolkit}";
+          EXTRA_LDFLAGS = "-L/lib -L${pkgs.linuxPackages.nvidia_x11}/lib";
           EXTRA_CCFLAGS = "-I/usr/include";
           LD_LIBRARY_PATH = [
             (lib.mkIf config.wsl.enable "/usr/lib/wsl/lib")
-            "${purePkgs.linuxPackages.nvidia_x11}/lib"
+            "${pkgs.linuxPackages.nvidia_x11}/lib"
             "${pkgs.ncurses5}/lib"
           ];
           MESA_D3D12_DEFAULT_ADAPTER_NAME = "Nvidia";
@@ -59,7 +58,7 @@ in
             };
           };
         };
-        virtualisation.docker = let 
+        virtualisation.docker = let
           settings = {
             features.cdi = true;
             cdi-spec-dirs = [ cfg.cdiDir ];

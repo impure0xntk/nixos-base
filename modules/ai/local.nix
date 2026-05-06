@@ -38,10 +38,10 @@ in
   config = lib.mkIf cfgAi.enable {
     services.ollama = {
       enable = cfg.enable;
-      package = if cfg.gpu == "cuda" then pkgs.pure-unstable.ollama-cuda
-        else if cfg.gpu == "rocm" then pkgs.pure-unstable.ollama-rocm
-        else if cfg.gpu == "vulkan" then pkgs.pure-unstable.ollama-vulkan
-        else pkgs.pure-unstable.ollama;
+      package = if cfg.gpu == "cuda" then pkgs.unstable.ollama-cuda
+        else if cfg.gpu == "rocm" then pkgs.unstable.ollama-rocm
+        else if cfg.gpu == "vulkan" then pkgs.unstable.ollama-vulkan
+        else pkgs.unstable.ollama;
       acceleration = if cfg.gpu == "none" then null else cfg.gpu;
       port = cfg.port;
       host = cfg.host;

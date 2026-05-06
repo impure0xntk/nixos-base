@@ -42,8 +42,8 @@ in {
   config = lib.mkIf cfg.enable {
     services.karakeep = {
       enable = true;
-      package = pkgs.pure-unstable.karakeep;
-      browser.exe = lib.getExe pkgs.pure-unstable.ungoogled-chromium;
+      package = pkgs.unstable.karakeep;
+      browser.exe = lib.getExe pkgs.unstable.ungoogled-chromium;
       extraEnvironment = {
         PORT = toString cfg.port;
         # DISABLE_SIGNUPS = "true";

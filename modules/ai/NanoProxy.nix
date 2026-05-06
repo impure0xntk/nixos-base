@@ -17,7 +17,7 @@ in {
         NANOPROXY_DEBUG = "1";
       };
       serviceConfig = {
-        ExecStart = "${pkgs.NanoProxy}/bin/nanoproxy";
+        ExecStart = "${pkgs.my.NanoProxy}/bin/nanoproxy";
         Restart = "on-failure";
         RestartSec = 5;
         StandardOutput = "journal";

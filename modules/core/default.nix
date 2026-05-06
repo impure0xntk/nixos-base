@@ -86,7 +86,6 @@ in
         SystemMaxUse=200M
       '';
     };
-    services.syslog-ng.package = pkgs.pure.syslogng; # To suppress aiohttp test failure
 
     # Disable tty to prohibit console login.
     systemd.services =

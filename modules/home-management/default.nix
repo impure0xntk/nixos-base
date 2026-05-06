@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }:
 let
   cfg = config.my.system.home-management;
-  package = pkgs.pure-unstable.homebox; # to use OIDC feature: 0.22+
+  package = pkgs.unstable.homebox; # to use OIDC feature: 0.22+
 in {
   options.my.system.home-management = {
     assets = {
