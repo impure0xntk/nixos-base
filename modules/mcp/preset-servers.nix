@@ -198,4 +198,10 @@ in
       "http://localhost:13001/mcp"
     ];
   };
+  vscode-debug = {
+    command = lib.getExe pkgs.my.mcp-server-remote;
+    args = [ # see home-manager-base/modules/ai/default.nix
+      "http://localhost:23001/mcp"
+    ];
+  };
 }
