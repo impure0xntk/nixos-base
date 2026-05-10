@@ -1,9 +1,14 @@
 { lib, opencodeZenParams, nanogptParams, ... }:
 
 {
-  hy3 = [
+  "laguna-m.1" = [
     {
-      model = "openrouter/tencent/hy3-preview:free";
+      model = "openrouter/poolside/laguna-m.1:free";
+    }
+  ];
+  "ring-2.6" = [
+    {
+      model = "openrouter/inclusionai/ring-2.6-1t:free";
     }
   ];
   "nemotoron-3-super" = [
