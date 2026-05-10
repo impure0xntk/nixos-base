@@ -183,21 +183,11 @@ in
     '';
 
     # V-268107
-    services.syslog-ng.enable = useAudit;
+    services.journald.audit = useAudit;
     # V-2681{08,09}: (transfer audit log) does not define here. Here is for mother system only.
     # V-26811{1,2,3,4}: (audit directory owner/permission): skip. default path /var/log/audit, and default owner is root
 
-    # V-26811{5,6,7,8}
-    services.syslog-ng.extraConfig = ''
-      options {
-        owner(root);
-        dir_owner(root);
-        group(root);
-        dir_group(root);
-        dir_perm(0750);
-        perm(0640);
-      };
-    '';
+    # V-26811{5,6,7,8}: system sets appropriate permissions automatically
 
     # V-268119: is the above audit.rules
 
