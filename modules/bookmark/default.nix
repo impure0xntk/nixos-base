@@ -56,5 +56,10 @@ in {
         EMBEDDING_TEXT_MODEL = INFERENCE_TEXT_MODEL;
       }) // cfg.extraEnvironment;
     } // cfg.settings;
+    # TODO: remove after NixOS 26.05
+    systemd.services.karakeep-workers.path = lib.mkForce (with pkgs.unstable; [
+      monolith
+      yt-dlp
+    ]);
   };
 }
