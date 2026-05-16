@@ -42,7 +42,6 @@ in
         else if cfg.gpu == "rocm" then pkgs.unstable.ollama-rocm
         else if cfg.gpu == "vulkan" then pkgs.unstable.ollama-vulkan
         else pkgs.unstable.ollama;
-      acceleration = if cfg.gpu == "none" then null else cfg.gpu;
       port = cfg.port;
       host = cfg.host;
       loadModels = cfg.loadModels;

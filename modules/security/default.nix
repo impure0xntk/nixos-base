@@ -19,7 +19,6 @@ in
     }
   ];
   # NixOS -25.11 official hardened profile
-  boot.kernelPackages = lib.mkDefault pkgs.linuxKernel.packages.linux_hardened;
   nix.settings.allowed-users = lib.mkDefault [ "@users" ];
   environment.memoryAllocator.provider = lib.mkDefault "scudo";
   environment.variables.SCUDO_OPTIONS = lib.mkDefault "zero_contents=true";
