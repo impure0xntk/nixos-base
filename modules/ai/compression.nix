@@ -17,13 +17,9 @@ in {
       };
       serviceConfig = {
         ExecStart = lib.concatStringsSep " " [
-          "${pkgs.my.headroom-ai}/bin/headroom" "proxy"
-          "--host" cfg.host
-          "--port" "${toString cfg.compression.port}"
-          "--log-file" "/tmp/headroom-log.jsonl"
-          "--no-rate-limit"
-          "--no-telemetry"
-          "--openai-api-url" "http://${cfg.host}:${toString cfg.port}"
+          "${pkgs.my.headroom-ai}/bin/headroom-proxy"
+          "--listen" "${cfg.host}:${toString cfg.compression.port}"
+          "--upstream" "http://${cfg.host}:${toString cfg.port}"
         ];
         Restart = "on-failure";
         RestartSec = 5;
