@@ -6,11 +6,6 @@
       model = "openrouter/poolside/laguna-m.1:free";
     }
   ];
-  "ring-2.6" = [
-    {
-      model = "openrouter/inclusionai/ring-2.6-1t:free";
-    }
-  ];
   "nemotoron-3-super" = [
     {
       model = "openrouter/nvidia/nemotron-3-super-120b-a12b:free";
