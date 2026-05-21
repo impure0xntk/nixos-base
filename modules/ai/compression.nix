@@ -7,7 +7,15 @@
 let
   cfg = config.my.system.ai.proxy;
 in {
-  config = lib.mkIf cfg.enable {
+  options.my.system.ai.proxy.compression = {
+    enable = lib.mkEnableOption "Whether to enable compression service for LLM";
+    port = lib.mkOption {
+      type = lib.types.int;
+      default = cfg.port + 10000;
+      description = "Port for the compression server.";
+    };
+  };
+  config = lib.mkIf cfg.compression.enable {
     systemd.services.headroom-ai = {
       description = "headroom-ai";
       after = [ "network-online.target" ];
