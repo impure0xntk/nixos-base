@@ -1,6 +1,8 @@
 { lib, opencodeZenParams, nanogptParams, ... }:
 
 {
+  "owl-alpha" = [ { model = "openrouter/openrouter/owl-alpha"; } ];
+
   "laguna-m.1" = [
     {
       model = "openrouter/poolside/laguna-m.1:free";
