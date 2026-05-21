@@ -43,11 +43,6 @@ in
         default = 1173;
         description = "Port for the LiteLLM API server.";
       };
-      compression.port = lib.mkOption {
-        type = lib.types.int;
-        default = cfg.proxy.port + 10000;
-        description = "Port for the compression server.";
-      };
       settings = lib.mkOption {
         type = lib.types.attrs;
         default = { };
