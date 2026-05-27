@@ -66,13 +66,13 @@ in
           };
         }) devUsersAndKeys)
       );
-      programs.ssh.matchBlocks = builtins.listToAttrs (
+      programs.ssh.settings = builtins.listToAttrs (
         map (attr: {
           name = "${attr.name}-local";
           value = {
-            user = attr.name;
-            hostname = config.networking.hostName;
-            identityFile = [ "%d/.ssh/${attr.priKeyName}" ];
+            User = attr.name;
+            HostName = config.networking.hostName;
+            IdentityFile = [ "%d/.ssh/${attr.priKeyName}" ];
           };
         }) devUsersAndKeys
       );
