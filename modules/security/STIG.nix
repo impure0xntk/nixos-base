@@ -51,7 +51,7 @@ in
     # V-268082
     services.getty.helpLine = interactiveLoginNotice;
 
-    services.openssh.banner = interactiveLoginNotice;    # V-268083
+    services.openssh.settings.Banner = "${pkgs.writeText "openssh-login-notice.txt" interactiveLoginNotice}";    # V-268083
     # services.openssh.settings.Banner = builtins.toFile "banner" interactiveLoginNotice;
     # V-268084
     services.displayManager.gdm.banner = interactiveLoginNotice;
