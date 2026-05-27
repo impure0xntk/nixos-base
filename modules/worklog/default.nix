@@ -46,7 +46,12 @@ in {
         dialect = "sqlite3";
         createLocally = lib.mkForce false;
       };
-      passwordSalt = "WGgYPNa4B4sfgJK3p61TYgWkx44rjTUY"; # wakapi github sample. This is insecure
+      environmentFiles = [
+        (pkgs.writeText "" ''
+          WAKAPI_PASSWORD_SALT="WGgYPNa4B4sfgJK3p61TYgWkx44rjTUY"; # wakapi github sample. This is insecure
+        '')
+        cfg.environmentFile
+      ];
       settings = {
         server = {
           listen_ipv4 = cfg.host;
@@ -60,11 +65,5 @@ in {
         mail.enable = false;
       } // cfg.settings;
     };
-    # Workaround: https://github.com/muety/wakapi/issues/731
-    # https://github.com/NotAShelf/nixpkgs/commit/3204e04a80ed61481315c1c0cdddfcdde116ed85
-    systemd.services.wakapi.serviceConfig.WorkingDirectory = "/var/lib/wakapi";
-    systemd.services.wakapi.serviceConfig.RuntimeDirectory = "wakapi";
-
-    systemd.services.wakapi.serviceConfig.EnvironmentFile = cfg.environmentFile;
   };
 }

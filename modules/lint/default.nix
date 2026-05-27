@@ -14,19 +14,13 @@ in {
       description = "hostname for LanguageTool server";
       default = config.networking.hostName;
     };
-    jre = lib.mkOption {
-      type = lib.types.package;
-      description = "JRE package for LanguageTool.";
-      default = pkgs.jre;
-    };
   };
 
   config = lib.mkIf cfg.enable {
     services.languagetool = {
       enable = true;
-      package = pkgs.languagetool.override {jre = cfg.jre;};
+      package = pkgs.languagetool;
       port = cfg.port;
-      jrePackage = cfg.jre;
       public = true; # Important for REST API
 
       # https://gist.github.com/CRTified/9d996a6a7c548ca42fa3672eee95da92
