@@ -80,7 +80,6 @@ in
     ];
 
     # V-268090: (audit) skip because V-268080 satisfies this.
-
     security.audit.rules =
       let
         # https://github.com/ansible-lockdown/UBUNTU22-CIS/pull/273/files
@@ -162,6 +161,23 @@ in
       "-w /var/cron/tabs/ -p wa -k services"
       "-w /var/cron/cron.allow -p wa -k services"
       "-w /var/cron/cron.deny -p wa -k services"
+    ];
+    # Workaround of https://github.com/NixOS/nixpkgs/issues/483085
+    # Remove later
+    systemd.services.audit-rules-nixos.serviceConfig.ExecStart = lib.mkForce [
+      ""
+      (pkgs.writeShellScript "load-audit-rules" ''
+
+        ${pkgs.audit}/bin/auditctl -D
+ 
+        ${lib.concatMapStringsSep "\n" (rule:
+          "${pkgs.audit}/bin/auditctl ${rule}"
+        ) config.security.audit.rules}
+
+        ${pkgs.audit}/bin/auditctl -e 1 || true
+
+        exit 0
+      '')
     ];
 
     boot.kernelParams = [
