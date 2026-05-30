@@ -285,7 +285,7 @@ in
     # V-268145: is the above pwquality
 
     # V-268146
-    networking.wireless.enable = lib.mkForce false;
+    networking.wireless.enable = false;
     # V-268147
     hardware.bluetooth.enable = false;
 
