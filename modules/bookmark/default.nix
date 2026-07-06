@@ -38,11 +38,12 @@ in {
       default = { };
     };
   };
-
+  # For workaround of insecure pnpm_9, use NIXPKGS_ALLOW_INSECURE=1 to build.
+  # TODO: Check karakeep pnpm_9 decoupling
   config = lib.mkIf cfg.enable {
     services.karakeep = {
       enable = true;
-      package = pkgs.unstable.karakeep.override { pnpm_9 = pkgs.unstable.pnpm; }; # Workaround of insecure pnpm_9
+      package = pkgs.unstable.karakeep;
       browser.exe = lib.getExe pkgs.unstable.ungoogled-chromium;
       extraEnvironment = {
         PORT = toString cfg.port;
