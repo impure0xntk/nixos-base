@@ -19,6 +19,9 @@
   "nemotron-embed" = [
     { model = "openrouter/nvidia/llama-nemotron-embed-vl-1b-v2:free"; }
   ];
+  "hy3" = [
+    { model = "openrouter/tencent/hy3:free"; }
+  ];
   "minimax-m2.5" = [
     {
       model = "openai/minimax/minimax-m2.5";
