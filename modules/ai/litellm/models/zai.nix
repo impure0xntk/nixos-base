@@ -16,4 +16,7 @@
   glm-5-think = [
     { model = "openai/zai-org/glm-5:thinking"; params = nanogptParams; }
   ];
+  "glm-5.2-think-paid" = [
+    { model = "openai/zai-org/glm-5.2:thinking"; params = nanogptParams; }
+  ];
 }

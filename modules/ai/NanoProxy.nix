@@ -13,7 +13,7 @@ in {
       environment = {
         PROXY_HOST = cfg.host;
         PROXY_PORT = "8787";
-        UPSTREAM_BASE_URL = "https://nano-gpt.com/api/subscription/v1"; # subscription models only
+        UPSTREAM_BASE_URL = "https://nano-gpt.com/api/v1";
         NANOPROXY_DEBUG = "1";
       };
       serviceConfig = {
