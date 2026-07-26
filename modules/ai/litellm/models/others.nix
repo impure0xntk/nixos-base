@@ -1,14 +1,17 @@
 { lib, opencodeZenParams, nanogptParams, ... }:
 
 {
-  "laguna-m.1" = [
-    { model = "openrouter/poolside/laguna-m.1:free"; }
+  "laguna-s-2.1" = [
+    { model = "openrouter/poolside/laguna-s-2.1:free"; }
   ];
-  "laguna-xs-2.1" = [
-    { model = "openrouter/poolside/laguna-xs-2.1:free"; }
+  "laguna-s-2.1-paid" = [
+    { model = "openrouter/poolside/laguna-s-2.1"; }
   ];
   "north-mini-code" = [
     { model = "openrouter/cohere/north-mini-code:free"; }
+  ];
+  "ling-3.0-flash" = [
+    { model = "openrouter/inclusionai/ling-3.0-flash:free"; }
   ];
   "nemotron-3-super" = [
     { model = "openrouter/nvidia/nemotron-3-super-120b-a12b:free"; }
