@@ -38,10 +38,11 @@ in
   config = lib.mkIf cfgAi.enable {
     services.ollama = {
       enable = cfg.enable;
-      package = if cfg.gpu == "cuda" then pkgs.unstable.ollama-cuda
-        else if cfg.gpu == "rocm" then pkgs.unstable.ollama-rocm
-        else if cfg.gpu == "vulkan" then pkgs.unstable.ollama-vulkan
-        else pkgs.unstable.ollama;
+      # TODO: refactor package; pkgs is newer and more stable than pkgs.unstable
+      package = if cfg.gpu == "cuda" then pkgs.ollama-cuda
+        else if cfg.gpu == "rocm" then pkgs.ollama-rocm
+        else if cfg.gpu == "vulkan" then pkgs.ollama-vulkan
+        else pkgs.ollama;
       port = cfg.port;
       host = cfg.host;
       loadModels = cfg.loadModels;
