@@ -1,6 +1,9 @@
 { lib, opencodeZenParams, nanogptParams, ... }:
 
 {
+  "ox-alpha" = [
+    { model = "openrouter/stealth/ox-alpha"; }
+  ];
   "laguna-s-2.1" = [
     { model = "openrouter/poolside/laguna-s-2.1:free"; }
   ];
