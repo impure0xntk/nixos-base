@@ -1,14 +1,11 @@
 { lib, opencodeZenParams, nanogptParams, ... }:
 
 {
-  "ox-alpha" = [
-    { model = "openrouter/stealth/ox-alpha"; }
+  "minimax-m2.7"= [
+    { model = "openrouter/minimax/minimax-m2.7:free"; }
   ];
   "laguna-s-2.1" = [
     { model = "openrouter/poolside/laguna-s-2.1:free"; }
-  ];
-  "laguna-s-2.1-paid" = [
-    { model = "openrouter/poolside/laguna-s-2.1"; }
   ];
   "north-mini-code" = [
     { model = "openrouter/cohere/north-mini-code:free"; }
