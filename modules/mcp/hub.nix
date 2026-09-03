@@ -106,8 +106,12 @@ in
       startLimitIntervalSec = 240;
       startLimitBurst = 5;
       preStart = ''
+        # Clean up old mcpjungle state completely to prevent stale configurations
+        # from causing server connection failures after reconfiguration
+        ${pkgs.coreutils}/bin/rm -rf ${workingDirectory} 2>/dev/null || true
         ${pkgs.coreutils}/bin/mkdir -p ${workingDirectory}/servers
-        rm -rf ${workingDirectory}/mcp*.db 2>/dev/null || true
+        ${pkgs.coreutils}/bin/chown ${cfg.hub.user}:${cfg.hub.group} ${workingDirectory}
+        ${pkgs.coreutils}/bin/chmod 700 ${workingDirectory}
       '';
       postStart = let
         jqFilter = pkgs.writeText "mcpjungle-transform.jq" ''
