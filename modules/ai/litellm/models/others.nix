@@ -1,17 +1,14 @@
 { lib, opencodeZenParams, nanogptParams, ... }:
 
 {
+  "minimax-m3"= [
+    { model = "openrouter/minimax/minimax-m3:free"; }
+  ];
   "minimax-m2.7"= [
     { model = "openrouter/minimax/minimax-m2.7:free"; }
   ];
   "laguna-s-2.1" = [
     { model = "openrouter/poolside/laguna-s-2.1:free"; }
-  ];
-  "north-mini-code" = [
-    { model = "openrouter/cohere/north-mini-code:free"; }
-  ];
-  "ling-3.0-flash" = [
-    { model = "openrouter/inclusionai/ling-3.0-flash:free"; }
   ];
   "nemotron-3-super" = [
     { model = "openrouter/nvidia/nemotron-3-super-120b-a12b:free"; }
