@@ -31,9 +31,7 @@ let
     package = pkgs.my.mcp-server-devtools;
     env =  devtoolsArgsMinimal.env // {
       # TODO: refactor to support the changing of these URLs without needing to override the whole package
-      SEARXNG_BASE_URL = lib.concatStringsSep "," [
-        "http://localhost:16060"
-      ];
+      SEARXNG_BASE_URL = "http://localhost:16060";
     };
   };
   devtoolsArgsAll = {
@@ -48,17 +46,12 @@ let
     ];
     env =  {
       # TODO: refactor to support the changing of these URLs without needing to override the whole package
-      SEARXNG_BASE_URL = lib.concatStringsSep "," [
-        "http://localhost:16060"
-      ];
+      SEARXNG_BASE_URL = "http://localhost:16060";
       ENABLE_ADDITIONAL_TOOLS = devtoolsArgsMinimal.env.ENABLE_ADDITIONAL_TOOLS + "," + (lib.concatStringsSep "," [
         "github"
         "code_skim"
         "pdf"
-        # TODO: enable after NixOS 26.05
-        # "process_document"
-        # TODO: check fixing of "Error: tool parameters array type must have items" in github copilot
-        # "excel"
+        "excel"
       ]);
       DISABLED_FUNCTIONS = devtoolsArgsMinimal.env.DISABLED_FUNCTIONS;
     };
