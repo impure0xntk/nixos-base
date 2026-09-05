@@ -11,24 +11,38 @@ in {
     enable = lib.mkEnableOption "Whether to enable compression service for LLM";
     port = lib.mkOption {
       type = lib.types.int;
-      default = cfg.port + 10000;
+      default = 8787;
       description = "Port for the compression server.";
     };
   };
   config = lib.mkIf cfg.compression.enable {
+    # https://docs.litellm.ai/docs/proxy/headroom
+    my.system.ai.proxy.settings.guardrails = [{
+      guardrail_name = "headroom-compression";
+      litellm_params = {
+        guardrail = "headroom";
+        mode = "pre_call";
+        api_base = "http://${cfg.host}:${toString cfg.compression.port}";
+        default_on = true;
+      };
+    }];
+
     systemd.services.headroom-ai = {
       description = "headroom-ai";
       after = [ "network-online.target" ];
       environment = {
+        HEADROOM_COMPRESS_USER_MESSAGES = "true"; # To compress tool_call result
+        HEADROOM_MIN_TOKENS = "200"; # 500 by default
+
+        HEADROOM_COMPRESS_ALLOW_REMOTE = "true";
         HEADROOM_TELEMETRY = "off";
-        HEADROOM_SAVINGS_PATH  = "/tmp/proxy_saving.json";
-        HF_HOME = "/tmp/cache"; # For downloading onnx models
+        HF_HOME = "/tmp/hf"; # For onnx model fetch
       };
       serviceConfig = {
         ExecStart = lib.concatStringsSep " " [
-          "${pkgs.my.headroom-ai}/bin/headroom-proxy"
-          "--listen" "${cfg.host}:${toString cfg.compression.port}"
-          "--upstream" "http://${cfg.host}:${toString cfg.port}"
+          "${pkgs.my.headroom-ai.code-proxy}/bin/headroom proxy"
+          "--host" cfg.host
+          "--port" (toString cfg.compression.port)
         ];
         Restart = "on-failure";
         RestartSec = 5;
