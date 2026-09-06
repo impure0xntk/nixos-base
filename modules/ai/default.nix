@@ -58,11 +58,6 @@ in
         default = null;
         description = "Path to the environment file containing API keys for LiteLLM.";
       };
-      presetModels = lib.mkOption {
-        type = lib.types.listOf lib.types.attrs;
-        default = (import ./litellm/models {inherit lib;});
-        description = "Preset models";
-      };
     };
   };
 
