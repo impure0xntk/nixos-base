@@ -2,7 +2,22 @@
 
 { lib, ... }:
 let
+  wildcard = modelName: rec {
+    model_name = "${modelName}/*";
+    litellm_params = {
+      model = model_name;
+    };
+  };
+  wildcardWithApiKey = modelName: api_key_name: rec {
+    model_name = "${modelName}/*";
+    litellm_params = {
+      model = model_name;
+      api_key = "os.environ/${api_key_name}";
+    };
+  };
 in [
+  (wildcard "chatgpt")
+  (wildcardWithApiKey "openrouter" "OPENROUTER_API_KEY")
   rec {
     model_name = "github_copilot/*";
     litellm_params = {

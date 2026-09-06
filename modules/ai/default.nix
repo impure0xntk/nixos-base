@@ -8,6 +8,8 @@ let
   cfg = config.my.system.ai;
   cfgProxy = config.my.system.networks.proxy;
 
+  defaultModels = import ./litellm/models.nix { inherit lib;};
+
   settingsDefault = {
     litellm_settings = {
       num_retries = 5;
@@ -19,7 +21,7 @@ let
       };
       drop_params = true;
     };
-    model_list = cfg.proxy.model_list;
+    model_list = cfg.proxy.model_list ++ defaultModels;
     router_settings = {
       base_delay = 3;
       max_delay = 15;
