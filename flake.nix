@@ -32,10 +32,6 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nix-zeroclaw = {
-      url = "github:impure0xntk/nix-zeroclaw";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
     nix-lib = {
       url = "github:impure0xntk/nix-lib";
       inputs = {
@@ -89,7 +85,6 @@
                 nix-index-database.nixosModules.nix-index
                 home-manager.nixosModules.home-manager
                 sops-nix.nixosModules.sops
-                nix-zeroclaw.nixosModules.default
               ]
               ++ (lib.flatten (lib.forEach [ ./modules ] (path: lib.my.listDefaultNixDirs { inherit path; })));
           };
