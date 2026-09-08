@@ -9,19 +9,12 @@ let
 
   addCustomGuardrailScript = paths: lib.forEach paths (path:
   let name = baseNameOf path;
-  in "${pkgs.writeShellScriptBin "add-custom-guardrail-${name}" ''
+  in pkgs.writeShellScript "add-custom-guardrail-${name}" ''
       set -x
       unlink ${name} || true
       ln -s ${path}
-    ''}/bin/add-custom-guardrail-${name}"
+    ''
   );
-
-  leanCtxConfigDir = pkgs.runCommand "lean-ctx-config" {} ''
-    mkdir -p $out
-    cat > $out/config.toml <<'EOF'
-    proxy_loopback_open = true
-    EOF
-  '';
 
   hardening = {
     LimitNOFILE = 65536;
@@ -159,20 +152,56 @@ in
     };
 
     # https://docs.litellm.ai/docs/proxy/guardrails/custom_guardrail
-    systemd.services.litellm.serviceConfig.ExecStartPre = addCustomGuardrailScript [
+    systemd.services.litellm.serviceConfig.ExecStartPre = (addCustomGuardrailScript [
       "${pkgs.my.litellm-guardrail-lean-ctx}/lib/python3.13/site-packages/litellm_guardrail_lean_ctx"
+    ]) ++ [
+      (pkgs.writeShellScript "setup-directories" ''
+        mkdir -p share state
+      '')
     ];
-    systemd.services.lean-ctx = {
+    systemd.services.lean-ctx = let
+      leanCtxConfigPath = lib.my.toToml { # https://leanctx.com/docs/configuration/
+        # By default via `lean-ctx proxy enable`
+        proxy_enabled = true;
+        permission_inheritance = "on";
+        minimal_overhead = true;
+        structure_first = true;
+        # journal_enabled = true;
+        auto_capture = true;
+
+        # Custom
+        compression_level = "standard";
+        checkpoint_interval = 0;
+        path_jail = false;
+        update_check_disabled = true;
+        crush_verbatim_json = true;
+
+        journal_enabled = true;
+        debug_log = true;
+
+        max_disk_mb = 512;
+        max_staleness_days = 1;
+
+        proxy_bind_host = "127.0.0.1"; # Loopback only to enable no auth
+        proxy_port = cfg.compression.lean-ctx.port;
+        proxy_loopback_open = true; # No auth: loopback only
+
+        proxy = {
+          history_mode = "off"; # delegate to litellm
+        };
+      };
+    in {
       description = "lean-ctx compression proxy";
       after = [ "network-online.target" ];
       wants = [ "network-online.target" ];
       environment = {
-        # LEAN_CTX_PROXY_BIND_HOST = cfg.host; # disable: loopback only
-        LEAN_CTX_CONFIG_DIR = leanCtxConfigDir;
-        LEAN_CTX_NO_UPDATE_CHECK = "1";
-        LEAN_CTX_PROXY_PORT = toString cfg.compression.lean-ctx.port;
-        LEAN_CTX_COMPRESSION = "standard";
-        LEAN_CTX_PROXY_HISTORY_MODE = "off"; # delegate to litellm
+        LEAN_CTX_CONFIG_DIR = pkgs.runCommand "lean-ctx-config" {} ''
+          mkdir -p $out
+          ln -s ${leanCtxConfigPath} $out/config.toml
+        '';
+        LEAN_CTX_DATA_DIR = "/var/lib/lean-ctx/share";
+        LEAN_CTX_STATE_DIR = "/var/lib/lean-ctx/state";
+        LEAN_CTX_CACHE_DIR = "/var/cache/lean-ctx";
       };
       serviceConfig = hardening // {
         ExecStart = lib.concatStringsSep " " [
@@ -184,6 +213,11 @@ in
         RestartSec = 5;
         StandardOutput = "journal";
         StandardError = "journal";
+
+        WorkingDirectory = "/run/lean-ctx";
+        RuntimeDirectory = "lean-ctx";
+        StateDirectory = "lean-ctx";
+        CacheDirectory = "lean-ctx";
       };
       wantedBy = [ "multi-user.target" ];
     };
