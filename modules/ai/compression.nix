@@ -86,7 +86,7 @@ in
       enable = lib.mkEnableOption "Whether to enable lean context service for LLM";
       package = lib.mkOption {
         type = lib.types.package;
-        default = pkgs.my.lean-ctx;
+        default = pkgs.lean-ctx;
         description = "The lean-ctx package providing the proxy binary.";
       };
       port = lib.mkOption {
