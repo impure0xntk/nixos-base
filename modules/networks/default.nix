@@ -18,6 +18,12 @@ in {
       default = builtins.getEnv "https_proxy";
       example = "https://example.com:3128";
     };
+    sslCertFiles = lib.mkOption {
+      type = lib.types.listOf pkgs.stdenv.lib.types.path;
+      description = "Custom trusted root SSL certificate files.";
+      default = [];
+      example = [ "/path/to/secret/ca-certificates" ];
+    };
   };
 
   config = rec {
@@ -43,5 +49,14 @@ in {
         noProxy = "127.0.0.1,localhost,${networking.hostName}";
       };
     };
+
+    # For enterprise SSL cert handling
+    # https://github.com/NixOS/nix/issues/10783
+    security.pki.certificates = lib.forEach cfg.sslCertFiles (path: builtins.readFile path);
+    systemd.services.nix-daemon.serviceConfig.Environment = let crtPath = "/etc/ssl/certs/ca-certificates.crt"; in [
+      # NOTE: this must be `ca-certificates.crt`, not `ca-bundle.crt` or any other value
+      "NIX_SSL_CERT_FILE=${crtPath}"
+      "CURL_CA_BUNDLE=${crtPath}"
+    ];
   };
 }
