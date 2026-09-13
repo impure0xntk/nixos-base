@@ -105,7 +105,7 @@ in
         # https://leanctx.com/docs/concepts/proxy/
         guardrail_name = "lean-ctx";
         litellm_params = {
-          guardrail = "litellm_guardrail_lean_ctx.LeanCTXGuardrail";
+          guardrail = "headroom";
           mode = "pre_call";
           # api_base = "http://${cfg.host}:${toString cfg.compression.lean-ctx.port}";
           api_base = "http://127.0.0.1:${toString cfg.compression.lean-ctx.port}"; # loopback only
@@ -152,13 +152,13 @@ in
     };
 
     # https://docs.litellm.ai/docs/proxy/guardrails/custom_guardrail
-    systemd.services.litellm.serviceConfig.ExecStartPre = (addCustomGuardrailScript [
-      "${pkgs.my.litellm-guardrail-lean-ctx}/lib/python3.13/site-packages/litellm_guardrail_lean_ctx"
-    ]) ++ [
-      (pkgs.writeShellScript "setup-directories" ''
-        mkdir -p share state
-      '')
-    ];
+    # systemd.services.litellm.serviceConfig.ExecStartPre = (addCustomGuardrailScript [
+    #   "${pkgs.my.litellm-guardrail-lean-ctx}/lib/python3.13/site-packages/litellm_guardrail_lean_ctx"
+    # ]) ++ [
+    #   (pkgs.writeShellScript "setup-directories" ''
+    #     mkdir -p share state
+    #   '')
+    # ];
     systemd.services.lean-ctx = let
       leanCtxConfigPath = lib.my.toToml { # https://leanctx.com/docs/configuration/
         # By default via `lean-ctx proxy enable`
