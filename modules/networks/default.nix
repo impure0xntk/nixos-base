@@ -18,12 +18,6 @@ in {
       default = builtins.getEnv "https_proxy";
       example = "https://example.com:3128";
     };
-    pkiCertificateFiles = lib.mkOption {
-      type = lib.types.listOf lib.types.path;
-      description = "Custom trusted nix-stored root SSL certificate files.";
-      default = [];
-      example = [ "/path/to/secret/ca-certificates" ];
-    };
   };
 
   config = rec {
@@ -49,9 +43,5 @@ in {
         noProxy = "127.0.0.1,localhost,${networking.hostName}";
       };
     };
-
-    # For enterprise SSL cert handling
-    # https://github.com/NixOS/nix/issues/10783
-    security.pki.certificateFiles = cfg.pkiCertificateFiles;
   };
 }
