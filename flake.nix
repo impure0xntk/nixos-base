@@ -69,7 +69,7 @@
           pkgs = import nixpkgs {
             inherit system;
             config.allowUnfree = true;
-            overlays = inputs.nix-pkgs.pkgsOverlay.${system};
+            overlays = inputs.nix-pkgs.overlays.${system};
           };
           lib = inputs.nix-lib.lib.${system};
         in
