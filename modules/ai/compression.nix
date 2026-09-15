@@ -128,6 +128,7 @@ in
       enable = cfg.compression.headroom.enable;
       description = "headroom-ai";
       after = [ "network-online.target" ];
+      wants = [ "network-online.target" ];
       environment = {
         HEADROOM_COMPRESS_USER_MESSAGES = "true"; # To compress tool_call result
         HEADROOM_MIN_TOKENS = "200"; # 500 by default

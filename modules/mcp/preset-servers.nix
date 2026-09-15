@@ -6,7 +6,7 @@
 }:
 let
   createDevtools = { package, env }:{
-    command = lib.getExe package;
+    command = lib.getExe' package "mcp-devtools";
     args = [ ];
     env = env;
   };
