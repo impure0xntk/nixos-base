@@ -23,9 +23,6 @@ in {
     ];
     boot.tmp.useTmpfs = false; # nix build no disk space workaround, don't use tmpfs
 
-    # By default, lix is enabled for all.
-    # Ensure it's enabled only when cfg.enable as developer environment is true.
-    lix.enable = cfg.enable;
     # For nix-index. by default programs.nix-index.enable = lib.mkDefault true;
     # https://github.com/nix-community/nix-index-database/blob/main/nix/shared.nix
     programs.nix-index.enable = cfg.enable;
