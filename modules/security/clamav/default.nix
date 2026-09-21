@@ -202,7 +202,7 @@ in
       wants = lib.optionals config.services.clamav.updater.enable [ "clamav-freshclam.service" ];
 
       serviceConfig = {
-        Type = "oneshot";
+        Type = "simple";
         Slice = "system-clamav.slice";
 
         # Override for quarantine
