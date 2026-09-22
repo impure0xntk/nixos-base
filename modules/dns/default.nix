@@ -105,6 +105,13 @@ in {
             ];
             ads = [
               "https://blocklistproject.github.io/Lists/ads.txt"
+              # Mobile
+              "https://raw.githubusercontent.com/r-a-y/mobile-hosts/master/AdguardMobileAds.txt"
+              "https://raw.githubusercontent.com/r-a-y/mobile-hosts/master/AdguardCNAMEAds.txt"
+              "https://raw.githubusercontent.com/r-a-y/mobile-hosts/master/AdguardCNAMEClickthroughs.txt"
+              "https://raw.githubusercontent.com/r-a-y/mobile-hosts/master/AdguardCNAMEMicrosites.txt"
+              "https://raw.githubusercontent.com/r-a-y/mobile-hosts/master/EasyPrivacy3rdParty.txt"
+              "https://raw.githubusercontent.com/r-a-y/mobile-hosts/master/EasyPrivacySpecific.txt"
               # Youtube
               "https://raw.githubusercontent.com/kboghdady/youTube_ads_4_pi-hole/master/youtubelist.txt"
               # Regional Ads (Japan)
@@ -115,6 +122,10 @@ in {
             tracking = [
               "https://blocklistproject.github.io/Lists/tracking.txt"
               "https://github.com/KnightmareVIIVIIXC/AIO-Firebog-Blocklists/raw/main/hostslists/firebogtrack.txt"
+              # Mobile
+              "https://raw.githubusercontent.com/r-a-y/mobile-hosts/master/AdguardMobileSpyware.txt"
+              "https://raw.githubusercontent.com/r-a-y/mobile-hosts/master/AdguardTracking.txt"
+              "https://raw.githubusercontent.com/r-a-y/mobile-hosts/master/AdguardCNAME.txt"
             ];
             malicious = [
               "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/hosts/tif.txt"
