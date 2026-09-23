@@ -32,7 +32,6 @@ in
     };
     nix = {
       enable = config.system.activatable;
-      package = pkgs.lixPackageSets.latest.lix;
       settings = {
         auto-optimise-store = true;
       };

@@ -16,11 +16,13 @@ in {
         message = "Couldn't find Development users.";
       }
     ];
-
-    nix.settings.experimental-features = [
-      "nix-command"
-      "flakes"
-    ];
+    nix = {
+      package = pkgs.lixPackageSets.latest.lix;
+      settings.experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
+    };
     boot.tmp.useTmpfs = false; # nix build no disk space workaround, don't use tmpfs
 
     # For nix-index. by default programs.nix-index.enable = lib.mkDefault true;
