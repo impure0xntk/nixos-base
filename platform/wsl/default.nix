@@ -196,9 +196,9 @@ in {
     # https://github.com/microsoft/WSL/issues/9099
     environment.sessionVariables.LD_LIBRARY_PATH = lib.optionals config.wsl.useWindowsDriver [ "/run/opengl-driver/lib" ];
 
-    # Clipboard
     nixpkgs.overlays = [
       (final: prev: {
+        # Clipboard
         xsel = pkgs.writeShellApplication {
           name = prev.xsel.pname;
           runtimeInputs = [ pkgs.nkf ];
@@ -207,6 +207,14 @@ in {
             ${pkgs.nkf}/bin/nkf -Ws | /mnt/c/Windows/System32/clip.exe
           '';
         };
+        # Notification
+        libnotify = prev.libnotify.overrideAttrs (old: {
+          buildInputs = old.buildInputs or [] ++ [pkgs.my.wsl-notify-send];
+          postInstall = old.postInstall or "" + ''
+            rm -f $out/bin/notify-send
+            ln -s ${pkgs.my.wsl-notify-send}/bin/wsl-notify-send $out/bin/notify-send
+          '';
+        });
       })
     ];
     environment.systemPackages = with pkgs; [
