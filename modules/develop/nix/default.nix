@@ -9,7 +9,7 @@ in {
     };
   };
 
-  config = {
+  config = lib.mkIf cfg.enable {
     assertions = [
       {
         assertion = ! (cfg.enable && (builtins.length cfgDevUser) == 0);
