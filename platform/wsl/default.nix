@@ -89,6 +89,7 @@ in {
         network.generateHosts = false;
         network.generateResolvConf = true;
         interop.appendWindowsPath = false;
+        boot.protectBinfmt = false; # WSL 3.0.1 https://github.com/microsoft/WSL/issues/41739
       };
     };
     users.users.${config.wsl.defaultUser} = {
