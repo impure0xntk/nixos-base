@@ -30,13 +30,4 @@ in [
       };
     };
   }
-  # TODO: Make this configurable
-  {
-    model_name = "jetbrains/*";
-    litellm_params = {
-      model = "openai/*";
-      api_base = "https://localhost:19516/";
-      api_key = "os.environ/JETBRAINS_CENTRAL_API_KEY";
-    };
-  }
 ]
