@@ -136,6 +136,9 @@ in
         HEADROOM_COMPRESS_ALLOW_REMOTE = "true";
         HEADROOM_TELEMETRY = "off";
         HF_HOME = "/tmp/hf"; # For onnx model fetch
+
+        # For saving history: e.g. proxy_savings.json
+        HEADROOM_WORKSPACE_DIR = "/var/lib/headroom";
       };
       serviceConfig = hardening // {
         ExecStart = lib.concatStringsSep " " [
@@ -148,6 +151,8 @@ in
         RestartSec = 5;
         StandardOutput = "journal";
         StandardError = "journal";
+
+        StateDirectory = "headroom";
       };
       wantedBy = [ "multi-user.target" ];
     };
