@@ -222,5 +222,12 @@ in {
     environment.systemPackages = with pkgs; [
       xsel # WSL is able to use Windows clipboard regardless of GUI
     ];
+
+    # For zed integration: zed uses `exec --cp` and it needs `/usr/bin/cp`
+    # TODO: unlink /usr/bin/cp manually when remove this activation.
+    system.activationScripts."zed-link-cp" = ''
+      unlink /usr/bin/cp || true
+      ln -sf ${pkgs.busybox}/bin/cp /usr/bin/cp 
+    '';
   };
 }
