@@ -90,6 +90,7 @@ in {
         network.generateResolvConf = true;
         interop.appendWindowsPath = false;
         boot.protectBinfmt = false; # WSL 3.0.1 https://github.com/microsoft/WSL/issues/41739
+        automount.options = "metadata,umask=22,fmask=11";
       };
     };
     users.users.${config.wsl.defaultUser} = {
