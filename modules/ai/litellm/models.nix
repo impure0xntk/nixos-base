@@ -15,9 +15,18 @@ let
       api_key = "os.environ/${api_key_name}";
     };
   };
+  wildcardOpenAIWithApiKey = modelName: api_base: api_key_name: rec {
+    model_name = "${modelName}/*";
+    litellm_params = {
+      model = "openai/*";
+      inherit api_base;
+      api_key = "os.environ/${api_key_name}";
+    };
+  };
 in [
   (wildcard "chatgpt")
   (wildcardWithApiKey "openrouter" "OPENROUTER_API_KEY")
+  (wildcardOpenAIWithApiKey "orcarouter" "https://api.orcarouter.ai/v1" "ORCAROUTER_API_KEY")
   rec {
     model_name = "github_copilot/*";
     litellm_params = {
