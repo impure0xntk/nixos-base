@@ -133,6 +133,7 @@ in
         HEADROOM_COMPRESS_USER_MESSAGES = "true"; # To compress tool_call result
         HEADROOM_MIN_TOKENS = "200"; # 500 by default
 
+        HEADROOM_ALLOW_UNAUTHENTICATED_BIND = "true";
         HEADROOM_COMPRESS_ALLOW_REMOTE = "true";
         HEADROOM_TELEMETRY = "off";
         HF_HOME = "/tmp/hf"; # For onnx model fetch
