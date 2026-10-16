@@ -2,7 +2,7 @@
 let
   cfg = config.my.system.task-management;
 
-  package = pkgs.unstable.vikunja;
+  package = pkgs.stable.vikunja;
 in {
   options.my.system.task-management = {
     enable = lib.mkEnableOption "Whether to enable task-management.";
