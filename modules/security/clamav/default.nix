@@ -65,6 +65,7 @@ let
 in
 {
   options.my.system.security.clamav = {
+    enable = lib.mkEnableOption "Whether to enable ClamAV antivirus.";
     memoryMax = lib.mkOption {
       type = lib.types.str;
       default = "16000M";
@@ -111,12 +112,12 @@ in
       };
     };
   };
-  config = {
+  config = lib.mkIf cfg.enable {
     environment.systemPackages = [ purgeQuarantinedFiles ];
     services = {
       clamav = let
-        enableServer = if cfg.remote.enable then cfg.remote.server.enable else true;
-        enableClient = if cfg.remote.enable then cfg.remote.client.enable else true;
+        enableServer = if cfg.remote.enable then cfg.remote.server.enable else cfg.enable;
+        enableClient = if cfg.remote.enable then cfg.remote.client.enable else cfg.enable;
       in {
         daemon = {
           enable = enableServer;
