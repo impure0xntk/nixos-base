@@ -1,8 +1,7 @@
 { config, pkgs, lib, ... }:
 let
   cfg = config.my.system.task-management;
-
-  package = pkgs.stable.vikunja;
+  package = pkgs.multiverse.versions.vikunja."2.7.0";
 in {
   options.my.system.task-management = {
     enable = lib.mkEnableOption "Whether to enable task-management.";
