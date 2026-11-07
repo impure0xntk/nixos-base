@@ -14,6 +14,11 @@ in {
       description = "Port for notification server.";
       default = 16060;
     };
+    extraEnvironment = lib.mkOption {
+      type = lib.types.attrs;
+      description = "Environment variables for notification server.";
+      default = {};
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -26,7 +31,7 @@ in {
         # Use reverse proxy for TLS termination
         GOTIFY_SERVER_SSL_ENABLED = "false";
         GOTIFY_SERVER_SSL_REDIRECTTOHTTPS = "false";
-      };
+      } // cfg.extraEnvironment;
     };
   };
 }
