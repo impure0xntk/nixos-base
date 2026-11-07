@@ -87,9 +87,6 @@ in
         HOME = config.systemd.services.litellm.serviceConfig.WorkingDirectory;
 
         LITELLM_DANGEROUSLY_PERMIT_WEAK_OR_UNSET_MASTER_KEY = "true";
-
-        # For GitHub Copilot
-        GITHUB_COPILOT_TOKEN_DIR = "${config.services.litellm.stateDir}/github_copilot";
       } // (lib.optionalAttrs (cfgProxy != "") {
         HTTPS_PROXY = cfgProxy;
       });
