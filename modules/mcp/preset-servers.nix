@@ -116,7 +116,7 @@ in
   };
   atlassian = {
     # TODO: may be able to replace to "url"
-    command = lib.getExe pkgs.my.mcp-server-remote;
+    command = lib.getExe pkgs.mcp-remote;
     args = [
       "https://mcp.atlassian.com/v1/sse"
     ];
@@ -186,13 +186,13 @@ in
   };
   vscode = {
     # see the bottom of this file
-    command = lib.getExe pkgs.my.mcp-server-remote;
+    command = lib.getExe pkgs.mcp-remote;
     args = [
       "http://localhost:13001/mcp"
     ];
   };
   vscode-debug = {
-    command = lib.getExe pkgs.my.mcp-server-remote;
+    command = lib.getExe pkgs.mcp-remote;
     args = [ # see home-manager-base/modules/ai/default.nix
       "http://localhost:23001/mcp"
     ];
