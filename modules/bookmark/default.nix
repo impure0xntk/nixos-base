@@ -44,7 +44,10 @@ in {
     services.karakeep = {
       enable = true;
       package = pkgs.unstable.karakeep;
-      browser.exe = lib.getExe pkgs.unstable.ungoogled-chromium;
+      # Workaround of missing of 157.0.8103.38
+      # TODO: recover ASAP to latest version after distributing 157.0.8103.38 via cachix.
+      # browser.exe = lib.getExe pkgs.unstable.ungoogled-chromium;
+      browser.exe = lib.getExe pkgs.multiverse.versions.ungoogled-chromium."156.0.8078.79";
       extraEnvironment = {
         PORT = toString cfg.port;
         # DISABLE_SIGNUPS = "true";
