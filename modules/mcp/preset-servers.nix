@@ -203,8 +203,8 @@ in
     args = [
       "run" "github:secbear/nix-sandbox-mcp" "--" "--stdio"
     ];
-    env = let basePath = "github:impure0xntk/nixos-base?dir=modules/mcp/nix-sandbox-mcp"; in {
-      NIX_SANDBOX_ENVS = "${basePath}#data-science,${basePath}#nix-tools";
+    env = let createDrv = drvName: "github:impure0xntk/nixos-base#${drvName}?dir=modules/mcp/nix-sandbox-mcp"; in {
+      NIX_SANDBOX_ENVS = "${createDrv "data-science"},${createDrv "nix-tools"}";
     };
   };
 }
