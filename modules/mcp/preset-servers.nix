@@ -198,13 +198,13 @@ in
     ];
   };
   nix-sandbox = {
-    # "--experimental-features 'nix-command flakes' is required"
-    command = lib.getExe config.nix.package;
-    args = [
-      "run" "github:secbear/nix-sandbox-mcp" "--" "--stdio"
-    ];
-    env = let createDrv = drvName: "github:impure0xntk/nixos-base#${drvName}?dir=modules/mcp/nix-sandbox-mcp"; in {
-      NIX_SANDBOX_ENVS = "${createDrv "data-science"},${createDrv "nix-tools"}";
+    # Patched server from nix-pkgs (pkgs.my.nix-sandbox-mcp): supports
+    # NIX_BUILD_OPTIONS for extra `nix build` flags passed to NIX_SANDBOX_ENVS builds.
+    command = lib.getExe pkgs.my.nix-sandbox-mcp;
+    args = [ "--stdio" ];
+    env = let basePath = "github:impure0xntk/nixos-base?dir=modules/mcp/nix-sandbox-mcp"; in {
+      NIX_SANDBOX_ENVS = "${basePath}#data-science,${basePath}#nix-tools";
+      NIX_BUILD_OPTIONS = "--no-write-lock-file";
     };
   };
 }
