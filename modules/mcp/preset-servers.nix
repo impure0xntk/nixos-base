@@ -197,4 +197,14 @@ in
       "http://localhost:23001/mcp"
     ];
   };
+  nix-sandbox = {
+    command = lib.getExe config.nix.package;
+    args = [
+      "run" "--experimental-features" "nix-command flakes"
+      "github:secbear/nix-sandbox-mcp" "--" "--stdio"
+    ];
+    env = let basePath = "github:impure0xntk/nixos-base/modules/mcp/nix-sandbox-mcp"; in {
+      NIX_SANDBOX_ENVS = "${basePath}#data-science,${basePath}#nix-tools";
+    };
+  };
 }
