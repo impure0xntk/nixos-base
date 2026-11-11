@@ -87,6 +87,8 @@ in
         HOME = config.systemd.services.litellm.serviceConfig.WorkingDirectory;
 
         LITELLM_DANGEROUSLY_PERMIT_WEAK_OR_UNSET_MASTER_KEY = "true";
+
+        CHATGPT_TOKEN_DIR = "/var/lib/litellm/chatgpt";
       } // (lib.optionalAttrs (cfgProxy != "") {
         HTTPS_PROXY = cfgProxy;
       });
