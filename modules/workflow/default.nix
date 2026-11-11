@@ -4,6 +4,7 @@
 { config, pkgs, lib, ... }:
 let
   cfg = config.my.system.workflow;
+  package = pkgs.multiverse.versions.n8n."2.39.6"; # Pinned: build is too long
 in {
   options.my.system.workflow = {
     enable = lib.mkEnableOption "Whether to enable workflow daemon.";
@@ -20,10 +21,9 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    nixpkgs.config.allowUnfree = true;
-
     services.n8n = {
       enable = true;
+      inherit package;
       environment = rec {
         N8N_HOST = cfg.host;
         N8N_PORT = toString cfg.port;
@@ -32,6 +32,7 @@ in {
         NODE_FUNCTION_ALLOW_EXTERNAL = "true";
         WEBHOOK_URL = "${N8N_PROTOCOL}://${N8N_HOST}:${N8N_PORT}";
         NODE_ENV = "production";
+        N8N_DIAGNOSTICS_ENABLED = false;
       };
     };
   };
