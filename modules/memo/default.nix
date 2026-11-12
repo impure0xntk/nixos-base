@@ -1,8 +1,18 @@
 { config, pkgs, lib, ... }:
+
 let
   cfg = config.my.system.memo;
 
-  memos = pkgs.unstable.memos;
+  memos = pkgs.my.memos; # TODO: change to pkgs.unstable after bumped to 26.11 in nixpkgs
+
+  memosConfigDir = pkgs.runCommand "memos-config" {}
+    ''
+      mkdir -p $out
+      ${lib.concatStringsSep "\n" (lib.attrValues (lib.mapAttrs (name: value: ''
+        mkdir -p "$out/$(dirname "${name}.json")"
+        cp ${pkgs.writeText "${name}.json" (builtins.toJSON value)} "$out/${name}.json"
+      '') cfg.settings))}
+    '';
 in {
   options.my.system.memo = {
     enable = lib.mkEnableOption "Whether to enable memo (Memos server).";
@@ -20,6 +30,16 @@ in {
       type = lib.types.path;
       description = "Host path for Memos data directory.";
       default = "/var/lib/memos";
+    };
+    settings = lib.mkOption {
+      type = lib.types.attrsOf (lib.types.anything);
+      description = ''
+        Memos declarative configuration. Each attribute is written as a
+        separate JSON file in a Nix store directory and applied at service
+        startup with \`memos config apply\` (ExecStartPost).
+        See https://usememos.com/docs/configuration/declarative-configuration
+      '';
+      default = {};
     };
   };
 
@@ -86,12 +106,17 @@ in {
         RestrictSUIDSGID = true;
         ExecStart = lib.getExe memos;
         EnvironmentFile = pkgs.writeText "memos-envfile" ''
-          MEMOS_MODE=prod
           MEMOS_ADDR=${cfg.host}
           MEMOS_PORT=${toString cfg.port}
           MEMOS_DATA=${cfg.dataDir}
           MEMOS_DRIVER=sqlite
           MEMOS_INSTANCE_URL=http://${cfg.host}:${toString cfg.port}
+        '';
+        # Apply declarative configuration after the server has started and
+        # created its database. Settings come from a Nix store directory,
+        # not /etc, so they remain readable under ProtectSystem = "strict".
+        ExecStartPost = ''
+          ${lib.getExe memos} config apply --config-dir ${memosConfigDir}
         '';
       };
     };
